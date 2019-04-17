@@ -2,51 +2,51 @@
 %{
   #include  <float.h>
 %}
-DIGIT [0-9]
+digit [0-9]
 
-LETTER [a-zA-Z]
-WHILE "while"
-IF "if"
-FOR "for"
-DEFVAR "DEFVAR"
-ENDDEF "ENDDEF"
-FLOAT "FLOAT"
-INT "INT"
-STRING "STRING"
-NEXT "NEXT"
-TO "TO"
-DISPLAY "DISPLAY"
-GET "GET"
-COMMENT "*/"(.*|\n|\r)"/*"
-FLOAT_CONSTANT [0-9]+"."[0-9]+
-STRING_CONSTANT  \".*\"
-INTEGER_CONSTANT [0-9]+
-ID [a-zA-Z]([a-zA-Z]|[0-9])*
-SPACE " "
-OPENING_PARENTHESIS "("
-CLOSING_PARENTHESIS ")"
-SUM_OPERATOR "+"
-MINUS_OPERATOR "-"
-DIVIDE_OPERATOR "/"
-MULTIPLIER_OPERATOR "*"
-EQUALS_OPERATOR "=="
-ASSIGNMENT_OPERATOR ":="
-OPENING_KEY "{"
-CLOSING_KEY "}"
-SEMICOLON ";"
-COLON ":"
+letter [a-zA-Z]
+while "WHILE"
+if "IF"
+for "for"
+defvar "DEFVAR"
+enddef "ENDDEF"
+float "FLOAT"
+int "INT"
+string "STRING"
+next "NEXT"
+to "TO"
+display "DISPLAY"
+get "GET"
+comment "*/"(.*|\n|\r)"/*"
+float_constant [0-9]+"."[0-9]+
+string_constant  \".*\"
+integer_constant [0-9]+
+id [a-zA-Z]([a-zA-Z]|[0-9])*
+space " "
+opening_parenthesis "("
+closing_parenthesis ")"
+sum_operator "+"
+minus_operator "-"
+divide_operator "/"
+multiplier_operator "*"
+equals_operator "=="
+assignment_operator ":="
+opening_key "{"
+closing_key "}"
+semicolon ";"
+colon ":"
 
 
 %%
 
-{SPACE} {printf("SPACE \n");}
-{DIGIT} {printf("DIGIT: "); ECHO; printf("\n");}
-{INTEGER_CONSTANT} {printf("INTEGER_CONSTANT: "); ECHO; printf("\n");}
-{STRING_CONSTANT} {printf("STRING_CONSTANT: "); checkStringConstantLimits(); printf("\n");}
-{FLOAT_CONSTANT} {printf("FLOAT_CONSTANT: "); checkFloatConstantLimits(); printf("\n");}
-{ID} {printf("ID: "); ECHO; printf("\n");}
-{COMMENT} {printf("COMMENT"); ECHO; printf("\n");}
-{ASSIGNMENT_OPERATOR} {printf("ASSIGNMENT_OPERATOR"); ECHO; printf("\n");}
+{space} {printf("space \n");}
+{digit} {printf("digit: "); ECHO; printf("\n");}
+{integer_constant} {printf("INTEGER_CONSTANT: "); ECHO; printf("\n");}
+{string_constant} {printf("STRING_CONSTANT: "); checkStringConstantLimits(); printf("\n");}
+{float_constant} {printf("FLOAT_CONSTANT: "); checkFloatConstantLimits(); printf("\n");}
+{id} {printf("ID: "); ECHO; printf("\n");}
+{comment} {printf("COMMENT"); ECHO; printf("\n");}
+{assignment_operator} {printf("ASSIGNMENT_OPERATOR"); ECHO; printf("\n");}
 . {printf("WTF IS THIS MAN\n");}
 <<EOF>> {yyterminate();}
 
@@ -64,7 +64,7 @@ checkStringConstantLimits() {
 }
 
 checkFloatConstantLimits() {
-  if (atof(yytext) > +3.4E+38 || yyleng > 39) {
+  if (atof(yytext) > FLT_MAX || yyleng > 39) {
     printf("Exceeded token float\n");
   } else {
     ECHO;
