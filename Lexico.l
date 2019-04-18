@@ -1,7 +1,10 @@
 
 %{
   #include  <float.h>
+  #include "y.tab.h"
 %}
+%option noyywrap
+%option yylineno
 
 while "WHILE"
 if "IF"
@@ -39,63 +42,65 @@ colon ":"
 
 %%
 
-{while} {printf("WHILE: "); ECHO; printf("\n");}
-{if} {printf("IF: "); ECHO; printf("\n");}
-{for} {printf("FOR: "); ECHO; printf("\n");}
-{defvar} {printf("DEFVAR: "); ECHO; printf("\n");}
-{enddef} {printf("ENDDEF: "); ECHO; printf("\n");}
-{float} {printf("FLOAT: "); ECHO; printf("\n");}
-{int} {printf("INT: "); ECHO; printf("\n");}
-{string} {printf("STRING: "); ECHO; printf("\n");}
-{next} {printf("NEXT: "); ECHO; printf("\n");}
-{to} {printf("TO: "); ECHO; printf("\n");}
-{display} {printf("DISPLAY: "); ECHO; printf("\n");}
-{get} {printf("GET: "); ECHO; printf("\n");}
-{closing_parenthesis} {printf("CLOSING_PARENTHESIS: "); ECHO; printf("\n");}
-{opening_parenthesis} {printf("OPENING_PARENTHESIS: "); ECHO; printf("\n");}
-{closing_key} {printf("CLOSING_KEY: "); ECHO; printf("\n");}
-{opening_key} {printf("OPENING_KEY: "); ECHO; printf("\n");}
-{opening_square_bracket} {printf("OPENING_SQUARE_BRACKET: "); ECHO; printf("\n");}
-{closing_square_bracket} {printf("CLOSING_SQUARE_BRACKET: "); ECHO; printf("\n");}
-{space} {printf("space \n");}
-{integer_constant} {printf("INTEGER_CONSTANT: "); ECHO; printf("\n");}
-{string_constant} {printf("STRING_CONSTANT: "); checkStringConstantLimits(); printf("\n");}
-{float_constant} {printf("FLOAT_CONSTANT: "); checkFloatConstantLimits(); printf("\n");}
-{id} {printf("ID: "); ECHO; printf("\n");}
-{comment} {printf(" COMMENT: "); ECHO; printf("\n");}
-{assignment_operator} {printf("ASSIGNMENT_OPERATOR: "); ECHO; printf("\n");}
-{sum_operator} {printf("SUM_OPERATOR: "); ECHO; printf("\n");}
-{minus_operator} {printf("MINUS_OPERATOR: "); ECHO; printf("\n");}
-{multiplier_operator} {printf("MULTIPLIER_OPERATOR: "); ECHO; printf("\n");}
-{divide_operator} {printf("DIVIDE_OPERATOR: "); ECHO; printf("\n");}
-{equals_operator} {printf("EQUALS_OPERATOR: "); ECHO; printf("\n");}
-{semicolon} {printf("SEMICOLON: "); ECHO; printf("\n");}
-{colon} {printf("COLON: "); ECHO; printf("\n");}
-
-
-
-
-
+{while} {return WHILE;}
+{if} {return IF;}
+{for} {return FOR;}
+{defvar} {return DEFVAR;}
+{enddef} {return ENDDEF;}
+{float} {return FLOAT_TYPE;}
+{int} {return INT_TYPE;}
+{string} {return STRING_TYPE;}
+{next} {return NEXT;}
+{to} {return TO;}
+{display} {return DISPLAY;}
+{get} {return GET;}
+{closing_parenthesis} {return CLOSING_PARENTHESIS;}
+{opening_parenthesis} {return OPENING_PARENTHESIS;}
+{closing_key} {return CLOSING_KEY;}
+{opening_key} {return OPENING_KEY;}
+{opening_square_bracket} {return OPENING_SQUARE_BRACKET;}
+{closing_square_bracket} {return CLOSING_SQUARE_BRACKET;}
+{integer_constant} {return INTEGER_CONSTANT;}
+{string_constant} {return STRING_CONSTANT;}
+{float_constant} {return FLOAT_CONSTANT;}
+{id} {return ID;}
+{assignment_operator} {return ASSIGNMENT_OPERATOR;}
+{sum_operator} {return SUM_OPERATOR;}
+{minus_operator} {return MINUS_OPERATOR;}
+{multiplier_operator} {return MULTIPLIER_OPERATOR;}
+{divide_operator} {return DIVIDE_OPERATOR;}
+{equals_operator} {return EQUALS_OPERATOR;}
+{semicolon} {return SEMICOLON;}
+{colon} {return COLON;}
+{space}
+"\n"
+"\r\n"
+"\t"
+{comment}
 . {printf("WTF IS THIS MAN\n");}
 <<EOF>> {yyterminate();}
 
 %%
-main() {
-  yylex();
-}
 
-checkStringConstantLimits() {
+
+int checkStringConstantLimits() {
   if (yyleng > 30) {
     printf("Exceeded token\n");
-  } else {
-    ECHO;
+    return 1;
   }
 }
 
-checkFloatConstantLimits() {
+int checkFloatConstantLimits() {
   if (atof(yytext) > FLT_MAX || yyleng > 39) {
     printf("Exceeded token float\n");
-  } else {
-    ECHO;
+    return 1;
+  }
+}
+
+
+int checkIntegerConstantLimits() {
+  if (atoi(yytext) > 32767) {
+    printf("Exceeded token integer\n");
+    return 1;
   }
 }
