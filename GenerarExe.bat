@@ -1,3 +1,4 @@
+@echo off
 echo Creating lex.yy.c"
 pause
 c:\GnuWin32\bin\flex Lexico.l
@@ -14,3 +15,4 @@ del y.output
 del y.tab.h
 echo "DONE"
 pause
+cls

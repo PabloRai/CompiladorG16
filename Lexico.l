@@ -30,8 +30,14 @@ sum_operator "+"
 minus_operator "-"
 divide_operator "/"
 multiplier_operator "*"
-equals_operator "=="
 assignment_operator ":="
+equals_logic_operator "=="
+not_equals_logic_operator "!="
+not_logic_operator "!"
+greater_logic_operator ">"
+greater_or_equal_logic_operator ">="
+lower_logic_operator "<"
+lower_or_equal_logic_operator "<="
 opening_key "{"
 closing_key "}"
 opening_square_bracket "["
@@ -69,7 +75,13 @@ colon ":"
 {minus_operator} {return MINUS_OPERATOR;}
 {multiplier_operator} {return MULTIPLIER_OPERATOR;}
 {divide_operator} {return DIVIDE_OPERATOR;}
-{equals_operator} {return EQUALS_OPERATOR;}
+{equals_logic_operator} {return EQUALS_LOGIC_OPERATOR;}
+{not_equals_logic_operator} {return NOT_EQUALS_LOGIC_OPERATOR;}
+{not_logic_operator} {return NOT_LOGIC_OPERATOR;}
+{greater_logic_operator} {return GREATER_LOGIC_OPERATOR;}
+{greater_or_equal_logic_operator} {return GREATER_OR_EQUAL_LOGIC_OPERATOR;}
+{lower_logic_operator} {return LOWER_LOGIC_OPERATOR;}
+{lower_or_equal_logic_operator} {return LOWER_OR_EQUAL_LOGIC_OPERATOR;} 
 {semicolon} {return SEMICOLON;}
 {colon} {return COLON;}
 {space}
@@ -77,7 +89,7 @@ colon ":"
 "\r\n"
 "\t"
 {comment}
-. {printf("WTF IS THIS MAN\n");}
+. {printf("WTF IS THIS MAN %s\n", yytext);}
 <<EOF>> {yyterminate();}
 
 %%

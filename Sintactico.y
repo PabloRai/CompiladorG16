@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define YYDEBUG 1
 extern int yylex();
 extern int yyparse();
 extern yylineno;
@@ -32,7 +33,6 @@ void yyerror(const char* s);
 %token ID
 %token OPENING_PARENTHESIS
 %token CLOSING_PARENTHESIS
-%token EQUALS_OPERATOR
 %token ASSIGNMENT_OPERATOR
 %token OPENING_KEY
 %token CLOSING_KEY
@@ -44,6 +44,13 @@ void yyerror(const char* s);
 %left MINUS_OPERATOR
 %left DIVIDE_OPERATOR
 %left MULTIPLIER_OPERATOR
+%left EQUALS_LOGIC_OPERATOR
+%left NOT_EQUALS_LOGIC_OPERATOR
+%left NOT_LOGIC_OPERATOR
+%left GREATER_LOGIC_OPERATOR
+%left GREATER_OR_EQUAL_LOGIC_OPERATOR
+%left LOWER_LOGIC_OPERATOR
+%left LOWER_OR_EQUAL_LOGIC_OPERATOR
 %start program
 
 
@@ -61,7 +68,53 @@ void yyerror(const char* s);
 %%
 
 
-program: {printf("STARTING COMPILATION\n");} variable_declaration_block {printf("\nSUCCESSFUL COMPILATION\n");}
+program: sentence {printf("\nSUCCESSFUL COMPILATION\n");}
+  ;
+
+sentence: sentence algorithm {printf(" SENTENCE ALGORITHM ");}
+  | variable_declaration_block {printf(" VARIABLE DECLARATION ");}
+  ;
+
+algorithm: decision {printf(" DECISION ");}
+  | expression {printf(" EXPRESSION ");}
+  ;
+
+decision: IF {printf(" IF ");} OPENING_PARENTHESIS {printf(" ( ");} condition CLOSING_PARENTHESIS {printf(" ) ");} OPENING_KEY {printf(" { ");} algorithm {printf(" ALGORITHM ");} CLOSING_KEY {printf(" } ");};
+
+condition: comparation {printf(" comparation ");}
+  | comparation logic_operator comparation
+  | NOT_LOGIC_OPERATOR comparation
+  ;
+
+comparation: expression {printf(" expression1 ");} logic_operator {printf(" logic operator ");} expression {printf(" expression2 ");}
+  ;
+
+logic_operator: EQUALS_LOGIC_OPERATOR
+  | NOT_EQUALS_LOGIC_OPERATOR
+  | GREATER_LOGIC_OPERATOR
+  | GREATER_OR_EQUAL_LOGIC_OPERATOR
+  | LOWER_LOGIC_OPERATOR
+  | LOWER_OR_EQUAL_LOGIC_OPERATOR
+  ;
+
+expression: expression SUM_OPERATOR term
+  | expression MINUS_OPERATOR term
+  | term
+  ;
+
+term: term MULTIPLIER_OPERATOR factor
+  | term DIVIDE_OPERATOR factor
+  | factor
+  ;
+
+factor: ID
+  | constant
+  | OPENING_PARENTHESIS expression CLOSING_PARENTHESIS
+  ;
+
+constant: INTEGER_CONSTANT
+  | FLOAT_CONSTANT
+  | STRING_CONSTANT
   ;
 
 variable_declaration_block: DEFVAR {printf("DEFVAR\n");} variable_declarations ENDDEF {printf("\nENDDEF\n");}
@@ -86,7 +139,9 @@ variable_list:
 %%
 
 int main(int argc, char *argv[]) {
-	yyin = fopen(argv[1], "r");;
+	yyin = fopen(argv[1], "r");
+  yydebug = 0;
+  printf("STARTING COMPILATION\n");
 	do {
 		yyparse();
 	} while(!feof(yyin));
