@@ -5,15 +5,15 @@ DEFVAR
 ENDDEF
 
 IF (a1 >= 2) {
-	a1 + a2
+		a1 := 9
 }
 
 IF (a1 > b2) {
-	a1 + a2
+		a1 := 9
 }
 
 IF (a1 > b2) {
 	IF (a1 > b2) {
-	a1 + a2
+		a1 := 9
 }
 }

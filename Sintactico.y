@@ -76,10 +76,12 @@ sentence: sentence algorithm {printf(" SENTENCE ALGORITHM ");}
   ;
 
 algorithm: decision {printf(" DECISION ");}
-  | expression {printf(" EXPRESSION ");}
+  | assignment {printf(" ASSIGNMENT ");}
   ;
 
 decision: IF {printf(" IF ");} OPENING_PARENTHESIS {printf(" ( ");} condition CLOSING_PARENTHESIS {printf(" ) ");} OPENING_KEY {printf(" { ");} algorithm {printf(" ALGORITHM ");} CLOSING_KEY {printf(" } ");};
+
+assignment: ID ASSIGNMENT_OPERATOR expression;
 
 condition: comparation {printf(" comparation ");}
   | comparation logic_operator comparation
