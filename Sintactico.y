@@ -75,13 +75,20 @@ sentence: sentence algorithm {printf(" SENTENCE ALGORITHM ");}
   | variable_declaration_block {printf(" VARIABLE DECLARATION ");}
   ;
 
-algorithm: decision {printf(" DECISION ");}
-  | assignment {printf(" ASSIGNMENT ");}
+algorithms: algorithm
+  | algorithms algorithm
   ;
 
-decision: IF {printf(" IF ");} OPENING_PARENTHESIS {printf(" ( ");} condition CLOSING_PARENTHESIS {printf(" ) ");} OPENING_KEY {printf(" { ");} algorithm {printf(" ALGORITHM ");} CLOSING_KEY {printf(" } ");};
+algorithm: decision {printf(" DECISION ");}
+  | assignment {printf(" ASSIGNMENT ");}
+  | while_loop {printf(" WHILE LOOP ");}
+  ;
+
+decision: IF {printf(" IF ");} OPENING_PARENTHESIS {printf(" ( ");} condition CLOSING_PARENTHESIS {printf(" ) ");} OPENING_KEY {printf(" { ");} algorithms {printf(" ALGORITHM ");} CLOSING_KEY {printf(" } ");};
 
 assignment: ID ASSIGNMENT_OPERATOR expression;
+
+while_loop: WHILE {printf(" WHILE ");} OPENING_PARENTHESIS {printf(" ( ");} condition CLOSING_PARENTHESIS {printf(" ) ");} OPENING_KEY {printf(" { ");} algorithms {printf(" ALGORITHM ");} CLOSING_KEY {printf(" } ");};
 
 condition: comparation {printf(" comparation ");}
   | comparation logic_operator comparation
