@@ -1,0 +1,54 @@
+DEFVAR
+   FLOAT : a1;a2
+   INT	: b1;b2
+   STRING : c1;c2;c3
+ENDDEF
+
+FOR b1 := 1 TO 5
+  a2 := 3
+NEXT b1
+
+
+FOR b1 := 1 TO 5 2
+  a2 := 3
+NEXT b1
+
+b1 := 8
+b2 := b1+3*2+(3+2)
+
+
+WHILE (a1 > a2) {
+  b2 := 8
+  IF(a1 > a2) {
+    c1 := "HOLA"
+  }
+}
+
+IF (a1 >= 2) {
+		a1 := 9
+}
+
+IF (a1 > b2) {
+		a1 := 9
+}
+
+IF (a1 > b2) {
+ b2 := 3
+	IF (a1 > b2) {
+		a1 := 9
+  }
+}
+
+
+IF (a1 > b2) {
+ b2 := 3
+	IF (a1 > b2) {
+		a1 := 9
+    WHILE(c1>c2) {
+      FOR b1 := 1 TO 5 2
+        a2 := 3
+      NEXT b1
+      a2 := 9
+    }
+  }
+}
