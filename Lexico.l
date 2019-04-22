@@ -2,6 +2,10 @@
 %{
   #include  <float.h>
   #include "y.tab.h"
+
+  void checkStringConstantLimits();
+  void checkFloatConstantLimits();
+  void checkIntegerConstantLimits();
 %}
 %option noyywrap
 %option yylineno
@@ -66,9 +70,9 @@ colon ":"
 {opening_key} {return OPENING_KEY;}
 {opening_square_bracket} {return OPENING_SQUARE_BRACKET;}
 {closing_square_bracket} {return CLOSING_SQUARE_BRACKET;}
-{integer_constant} {return INTEGER_CONSTANT;}
-{string_constant} {return STRING_CONSTANT;}
-{float_constant} {return FLOAT_CONSTANT;}
+{integer_constant} {checkIntegerConstantLimits(); return INTEGER_CONSTANT;}
+{string_constant} {checkStringConstantLimits(); return STRING_CONSTANT;}
+{float_constant} {checkFloatConstantLimits(); return FLOAT_CONSTANT;}
 {id} {return ID;}
 {assignment_operator} {return ASSIGNMENT_OPERATOR;}
 {sum_operator} {return SUM_OPERATOR;}
@@ -81,7 +85,7 @@ colon ":"
 {greater_logic_operator} {return GREATER_LOGIC_OPERATOR;}
 {greater_or_equal_logic_operator} {return GREATER_OR_EQUAL_LOGIC_OPERATOR;}
 {lower_logic_operator} {return LOWER_LOGIC_OPERATOR;}
-{lower_or_equal_logic_operator} {return LOWER_OR_EQUAL_LOGIC_OPERATOR;} 
+{lower_or_equal_logic_operator} {return LOWER_OR_EQUAL_LOGIC_OPERATOR;}
 {semicolon} {return SEMICOLON;}
 {colon} {return COLON;}
 {space}
@@ -95,24 +99,30 @@ colon ":"
 %%
 
 
-int checkStringConstantLimits() {
+void checkStringConstantLimits() {
   if (yyleng > 30) {
-    printf("Exceeded token\n");
-    return 1;
+    printf("Max length exceeded on line %d\n", yylineno);
+    exit(1);
+  } else {
+    sscanf(yytext, "%s", yylval.string_value);
   }
 }
 
-int checkFloatConstantLimits() {
+void checkFloatConstantLimits() {
   if (atof(yytext) > FLT_MAX || yyleng > 39) {
-    printf("Exceeded token float\n");
-    return 1;
+    printf("Max value exceeded on line %d\n", yylineno);
+    exit(1);
+  } else {
+    yylval.float_value = atof(yytext);
   }
 }
 
 
-int checkIntegerConstantLimits() {
+void checkIntegerConstantLimits() {
   if (atoi(yytext) > 32767) {
-    printf("Exceeded token integer\n");
-    return 1;
+    printf("Max value exceeded on line %d\n", yylineno);
+    exit(1);
+  } else {
+    yylval.integer_value = atoi(yytext);
   }
 }
