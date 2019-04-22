@@ -83,6 +83,8 @@ algorithm: decision {printf(" DECISION ");}
   | assignment {printf(" ASSIGNMENT ");}
   | while_loop {printf(" WHILE LOOP ");}
   | for_loop {printf(" FOR LOOP ");}
+  | display {printf(" DISPLAY ");}
+  | get {printf(" GET ");}
   ;
 
 decision: IF {printf(" IF ");} OPENING_PARENTHESIS {printf(" ( ");} condition CLOSING_PARENTHESIS {printf(" ) ");} OPENING_KEY {printf(" { ");} algorithms {printf(" ALGORITHM ");} CLOSING_KEY {printf(" } ");};
@@ -94,6 +96,12 @@ while_loop: WHILE {printf(" WHILE ");} OPENING_PARENTHESIS {printf(" ( ");} cond
 for_loop: FOR ID ASSIGNMENT_OPERATOR expression TO expression INTEGER_CONSTANT algorithms NEXT ID
   | FOR ID ASSIGNMENT_OPERATOR expression TO expression algorithms NEXT ID
   ;
+
+display: DISPLAY ID
+  | DISPLAY constant
+  ;
+
+get: GET ID;
 
 condition: comparation {printf(" comparation ");}
   | comparation logic_operator comparation

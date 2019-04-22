@@ -34,6 +34,7 @@ IF (a1 > b2) {
 
 IF (a1 > b2) {
  b2 := 3
+ GET pepe
 	IF (a1 > b2) {
 		a1 := 9
   }
@@ -42,6 +43,7 @@ IF (a1 > b2) {
 
 IF (a1 > b2) {
  b2 := 3
+ DISPLAY "hola"
 	IF (a1 > b2) {
 		a1 := 9
     WHILE(c1>c2) {
