@@ -23,7 +23,7 @@ to "TO"
 display "DISPLAY"
 get "GET"
 comment "*/"(.*|\n|\r)"/*"
-float_constant [0-9]+"."[0-9]+
+float_constant ([0-9]+"."[0-9]+)|([0-9]*"."[0-9]+)|([0-9]+"."[0-9]*)
 string_constant  \".*\"
 integer_constant [0-9]+
 id [a-zA-Z]([a-zA-Z]|[0-9])*
