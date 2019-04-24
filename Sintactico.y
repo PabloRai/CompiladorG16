@@ -1,6 +1,7 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include "symbol.h"
 
 #define YYDEBUG 1
 extern int yylex();
@@ -164,9 +165,11 @@ int main(int argc, char *argv[]) {
 	yyin = fopen(argv[1], "r");
   yydebug = 0;
   printf("STARTING COMPILATION\n");
+  symbolTable = NULL;
 	do {
 		yyparse();
 	} while(!feof(yyin));
+  printTable();
 	return 0;
 }
 void yyerror(const char* s) {

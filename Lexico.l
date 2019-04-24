@@ -70,10 +70,10 @@ colon ":"
 {opening_key} {return OPENING_KEY;}
 {opening_square_bracket} {return OPENING_SQUARE_BRACKET;}
 {closing_square_bracket} {return CLOSING_SQUARE_BRACKET;}
-{integer_constant} {checkIntegerConstantLimits(); return INTEGER_CONSTANT;}
-{string_constant} {checkStringConstantLimits(); return STRING_CONSTANT;}
-{float_constant} {checkFloatConstantLimits(); return FLOAT_CONSTANT;}
-{id} {return ID;}
+{integer_constant} {checkIntegerConstantLimits(); insert(yytext); return INTEGER_CONSTANT;}
+{string_constant} {checkStringConstantLimits(); insert(yytext); return STRING_CONSTANT;}
+{float_constant} {checkFloatConstantLimits(); insert(yytext); return FLOAT_CONSTANT;}
+{id} {insert(yytext); return ID;}
 {assignment_operator} {return ASSIGNMENT_OPERATOR;}
 {sum_operator} {return SUM_OPERATOR;}
 {minus_operator} {return MINUS_OPERATOR;}
