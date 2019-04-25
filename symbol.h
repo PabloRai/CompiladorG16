@@ -19,27 +19,27 @@ void printTable();
 
 
 
-symbolNode* insert(char* name) {
-    symbolNode* foundNode = findSymbol(name);
+symbolNode* insert(char* value) {
+    symbolNode* foundNode = findSymbol(value);
     if (foundNode != NULL) {
         return foundNode;
     }
     
     symbolNode* node = (symbolNode*) malloc(sizeof(symbolNode));
-    int len = strlen(name);
+    int len = strlen(value);
     char* valueToInsert = malloc(len+1);
-    strcpy(valueToInsert, name);
-    node->name = valueToInsert;
+    strcpy(valueToInsert, value);
+    node->value = valueToInsert;
     node->next = symbolTable;
     symbolTable = node;
     return node;
 }
 
-symbolNode* findSymbol(char* name) {
+symbolNode* findSymbol(char* value) {
     symbolNode* tableNode = symbolTable;
     
     while(tableNode != NULL){
-        if (strcmp(name, tableNode->name) == 0) {
+        if (strcmp(value, tableNode->value) == 0) {
             return tableNode;
         }
         tableNode = tableNode->next;
@@ -52,7 +52,7 @@ void printTable() {
     symbolNode* current = symbolTable;
     printf("\n TABLITA \n");
     while(current != NULL){
-        printf("%s\n", current->name);
+        printf("%s\n", current->value);
         current = current->next;
     }
     
