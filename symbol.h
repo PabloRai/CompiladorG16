@@ -16,6 +16,7 @@ symbolNode* symbolTable;
 symbolNode* insert();
 symbolNode* findSymbol();
 void concatenate();
+void removeChar();
 void printTable();
 
 
@@ -35,6 +36,7 @@ symbolNode* insert(char* value) {
     // Is it a string constant?
     int isConstant = 0;
     if (valueToInsert[0] == '"') {
+        removeChar(valueToInsert, '"');
         node->length = strlen(valueToInsert);
         isConstant = 1;
         // Is it a float constant?
@@ -46,7 +48,6 @@ symbolNode* insert(char* value) {
     }
     
     if (isConstant == 1) {
-        int size = strlen(valueToInsert) + 2;
         node->name[0] = '_' ;
         concatenate(node->name, valueToInsert);
         printf("\nAsi quedo %s\n", node->name);
@@ -54,6 +55,7 @@ symbolNode* insert(char* value) {
         strcpy(node->name, valueToInsert);
     }
 
+    
     node->value = valueToInsert;
     node->next = symbolTable;
     symbolTable = node;
@@ -77,7 +79,7 @@ void printTable() {
     symbolNode* current = symbolTable;
     printf("\n TABLITA \n");
     while(current != NULL){
-        printf("%s %s\n", current->value, current->name);
+        printf("%s %s %d\n", current->value, current->name, current->length);
         current = current->next;
     }
     
@@ -86,8 +88,8 @@ void printTable() {
 
 
 void concatenate(char* original, char* add) {
-  {
-   while(*original) {
+  
+  while(*original) {
       original++;
    }
      
@@ -97,5 +99,17 @@ void concatenate(char* original, char* add) {
       original++;
    }
    *original = '\0';
+
 }
-}
+
+
+void removeChar(char *s, int c){ 
+  
+    int j, n = strlen(s); 
+    int i;
+    for (i=j=0; i<n; i++) 
+       if (s[i] != c) 
+          s[j++] = s[i]; 
+      
+    s[j] = '\0'; 
+} 
