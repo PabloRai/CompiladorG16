@@ -77,7 +77,7 @@ void printTable() {
     symbolNode* current = symbolTable;
     printf("\n TABLITA \n");
     while(current != NULL){
-        printf("%s\n", current->value);
+        printf("%s %s\n", current->value, current->name);
         current = current->next;
     }
     
