@@ -94,7 +94,7 @@ assignment: identification ASSIGNMENT_OPERATOR expression;
 
 while_loop: WHILE {printf(" WHILE ");} OPENING_PARENTHESIS {printf(" ( ");} condition CLOSING_PARENTHESIS {printf(" ) ");} OPENING_KEY {printf(" { ");} algorithms {printf(" ALGORITHM ");} CLOSING_KEY {printf(" } ");};
 
-for_loop: FOR identification ASSIGNMENT_OPERATOR expression TO expression INTEGER_CONSTANT algorithms NEXT identification
+for_loop: FOR identification ASSIGNMENT_OPERATOR expression TO expression integer_constant algorithms NEXT identification
   | FOR identification ASSIGNMENT_OPERATOR expression TO expression algorithms NEXT identification
   ;
 
@@ -160,6 +160,8 @@ variable_list:
   ;
 
 identification: ID {printf(" ID %s ", $1);};
+
+integer_constant: INTEGER_CONSTANT {printf(" INTEGER_CONSTANT %d ", $1);};
 
 
 %%
