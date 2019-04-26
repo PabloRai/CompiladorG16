@@ -3,7 +3,7 @@
 #include <ctype.h> 
 
 typedef struct listSymbol {
-    char name[120];
+    char name[220];
     char* type;
     char* value;
     int length;

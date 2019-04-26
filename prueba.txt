@@ -26,6 +26,8 @@ WHILE (a1 > a2) {
 
 IF (a1 >= 2) {
 		a1 := 9
+    a1 := 0b110
+    a1 := 0xABF
 }
 
 IF (a1 > b2) {
@@ -43,8 +45,8 @@ IF (a1 > b2) {
 
 IF (a1 > b2) {
  b2 := 3
- DISPLAY "hola"
-	IF (a1 > b2) {
+ b3 := "sarasa"
+  IF (a1 > b2) {
 		a1 := 9
     WHILE(c1>c2) {
       FOR b1 := 1 TO 5 2

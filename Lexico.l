@@ -25,7 +25,7 @@ get "GET"
 comment "*/"(.*|\n|\r)"/*"
 float_constant ([0-9]+"."[0-9]+)|([0-9]*"."[0-9]+)|([0-9]+"."[0-9]*)
 string_constant  \".*\"
-integer_constant [0-9]+
+integer_constant ([0-9]+)|("0b"(1|0)+)|("0x"([0-9]|[ABCDEF])+)
 id [a-zA-Z]([a-zA-Z]|[0-9])*
 space " "
 opening_parenthesis "("
