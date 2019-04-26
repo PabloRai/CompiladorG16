@@ -90,19 +90,19 @@ algorithm: decision {printf(" DECISION ");}
 
 decision: IF {printf(" IF ");} OPENING_PARENTHESIS {printf(" ( ");} condition CLOSING_PARENTHESIS {printf(" ) ");} OPENING_KEY {printf(" { ");} algorithms {printf(" ALGORITHM ");} CLOSING_KEY {printf(" } ");};
 
-assignment: ID ASSIGNMENT_OPERATOR expression;
+assignment: identification ASSIGNMENT_OPERATOR expression;
 
 while_loop: WHILE {printf(" WHILE ");} OPENING_PARENTHESIS {printf(" ( ");} condition CLOSING_PARENTHESIS {printf(" ) ");} OPENING_KEY {printf(" { ");} algorithms {printf(" ALGORITHM ");} CLOSING_KEY {printf(" } ");};
 
-for_loop: FOR ID ASSIGNMENT_OPERATOR expression TO expression INTEGER_CONSTANT algorithms NEXT ID
-  | FOR ID ASSIGNMENT_OPERATOR expression TO expression algorithms NEXT ID
+for_loop: FOR identification ASSIGNMENT_OPERATOR expression TO expression INTEGER_CONSTANT algorithms NEXT identification
+  | FOR identification ASSIGNMENT_OPERATOR expression TO expression algorithms NEXT identification
   ;
 
-display: DISPLAY ID
+display: DISPLAY identification
   | DISPLAY constant
   ;
 
-get: GET ID;
+get: GET identification;
 
 condition: comparation {printf(" comparation ");}
   | comparation logic_operator comparation
@@ -130,7 +130,7 @@ term: term MULTIPLIER_OPERATOR factor
   | factor
   ;
 
-factor: ID
+factor: identification
   | constant
   | OPENING_PARENTHESIS expression CLOSING_PARENTHESIS
   ;
