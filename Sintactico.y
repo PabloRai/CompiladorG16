@@ -135,9 +135,9 @@ factor: identification
   | OPENING_PARENTHESIS expression CLOSING_PARENTHESIS
   ;
 
-constant: INTEGER_CONSTANT
-  | FLOAT_CONSTANT
-  | STRING_CONSTANT
+constant: INTEGER_CONSTANT {printf("INTEGER_CONSTANT %d", $1);}
+  | FLOAT_CONSTANT {printf("FLOAT_CONSTANT %f", $1);}
+  | STRING_CONSTANT {printf("STRING_CONSTANT %s", $1);}
   ;
 
 variable_declaration_block: DEFVAR {printf("DEFVAR\n");} variable_declarations ENDDEF {printf("\nENDDEF\n");}
