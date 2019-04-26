@@ -58,7 +58,7 @@ void yyerror(const char* s);
 %type <integer_value> INTEGER_CONSTANT
 %type <float_value> FLOAT_CONSTANT
 %type <string_value> STRING_CONSTANT
-
+%type <string_value> ID
 
 %union {
   int integer_value;
@@ -155,9 +155,12 @@ variable_type:
   | STRING_TYPE {printf(" STRING_TYPE ");}
   ;
 variable_list:
-   variable_list {printf(" VARIABLE_LIST ");} SEMICOLON {printf(";");} ID {printf(" ID ");}
-  | ID {printf(" ID ");}
+   variable_list {printf(" VARIABLE_LIST ");} SEMICOLON {printf(";");} identification {printf(" ID ");}
+  | identification
   ;
+
+identification: ID {printf(" ID %s ", $1);};
+
 
 %%
 
