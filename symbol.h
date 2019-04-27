@@ -27,6 +27,7 @@ void putTypeIdentifierOnSymbolTable();
 void concatenate();
 void removeChar();
 void printTable();
+char* substring();
 
 // Symbol Identifier auxiliars
 identifierNode* identifierList;
@@ -49,6 +50,8 @@ symbolNode* insert(char* value) {
     
     // Is it a string constant?
     int isConstant = 0;
+    int shouldApplyBase2Transformation = 0;
+    int shouldApplyBase16Transformation = 0;
     if (valueToInsert[0] == '"') {
         removeChar(valueToInsert, '"');
         node->length = strlen(valueToInsert);
@@ -59,6 +62,14 @@ symbolNode* insert(char* value) {
         // Is it a integer constant?
     } else if (isdigit(valueToInsert[0]) != 0) {
         isConstant = 1;
+        if (valueToInsert[0] == '0') {
+            if(valueToInsert[1] == 'b') {
+                shouldApplyBase2Transformation = 1;
+            } else if (valueToInsert[1] == 'x') {
+                shouldApplyBase16Transformation = 1;
+            }
+        }
+        
     }
     
     if (isConstant == 1) {
@@ -68,7 +79,15 @@ symbolNode* insert(char* value) {
         strcpy(node->name, valueToInsert);
     }
 
-    
+    if(shouldApplyBase2Transformation == 1) {
+        char* literalValue = substring(valueToInsert, 3, strlen(valueToInsert));
+        int transformedValue = (int) strtol(literalValue, NULL, 2);
+        itoa(transformedValue, valueToInsert, 10);
+    } else if (shouldApplyBase16Transformation == 1) {
+        char* literalValue = substring(valueToInsert, 3, strlen(valueToInsert));
+        int transformedValue = (int) strtol(literalValue, NULL, 16);
+        itoa(transformedValue, valueToInsert, 10);
+    }
     node->value = valueToInsert;
     node->next = symbolTable;
     symbolTable = node;
@@ -183,4 +202,30 @@ void putTypeIdentifierOnSymbolTable(char* type) {
 
 void clearIdentifierList() {
     identifierList = NULL;
+}
+
+
+
+char* substring(char *string, int position, int length)
+{
+   char *pointer;
+   int c;
+ 
+   pointer = malloc(length+1);
+   
+   if (pointer == NULL)
+   {
+      printf("Unable to allocate memory.\n");
+      exit(1);
+   }
+ 
+   for (c = 0 ; c < length ; c++)
+   {
+      *(pointer+c) = *(string+position-1);      
+      string++;  
+   }
+ 
+   *(pointer+c) = '\0';
+ 
+   return pointer;
 }

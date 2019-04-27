@@ -7,6 +7,7 @@
   void checkStringConstantLimits();
   void checkFloatConstantLimits();
   void checkIntegerConstantLimits();
+  char* subsTringIfNeeded();
 %}
 %option noyywrap
 %option yylineno
@@ -71,7 +72,7 @@ colon ":"
 {opening_key} {return OPENING_KEY;}
 {opening_square_bracket} {return OPENING_SQUARE_BRACKET;}
 {closing_square_bracket} {return CLOSING_SQUARE_BRACKET;}
-{integer_constant} {checkIntegerConstantLimits(); yylval.integer_value = atoi(yytext); insert(yytext); return INTEGER_CONSTANT;}
+{integer_constant} {checkIntegerConstantLimits(); yylval.integer_value = atoi(subsTringIfNeeded()); insert(yytext); return INTEGER_CONSTANT;}
 {string_constant} {checkStringConstantLimits(); strcpy(yylval.string_value, yytext); insert(yytext); return STRING_CONSTANT;}
 {float_constant} {checkFloatConstantLimits(); yylval.float_value = atof(yytext); insert(yytext); return FLOAT_CONSTANT;}
 {id} {strcpy(yylval.string_value, yytext); insert(yytext); return ID;}
@@ -104,8 +105,6 @@ void checkStringConstantLimits() {
   if (yyleng > 30) {
     printf("Max length exceeded on line %d\n", yylineno);
     exit(1);
-  } else {
-    sscanf(yytext, "%s", yylval.string_value);
   }
 }
 
@@ -113,8 +112,6 @@ void checkFloatConstantLimits() {
   if (atof(yytext) > FLT_MAX || yyleng > 39) {
     printf("Max value exceeded on line %d\n", yylineno);
     exit(1);
-  } else {
-    yylval.float_value = atof(yytext);
   }
 }
 
@@ -123,7 +120,25 @@ void checkIntegerConstantLimits() {
   if (atoi(yytext) > 32767) {
     printf("Max value exceeded on line %d\n", yylineno);
     exit(1);
-  } else {
-    yylval.integer_value = atoi(yytext);
   }
+}
+
+
+char* subsTringIfNeeded() {
+  char* yyTextCopy = strdup(yytext);
+ 
+  if(yyTextCopy[0] == '0') {
+    if(yyTextCopy[1] == 'b') {
+      yyTextCopy= (char*) substring(yyTextCopy, 3, strlen(yyTextCopy));
+      int transformedValue = (int) strtol(yyTextCopy, NULL, 2);
+      itoa(transformedValue, yyTextCopy, 10);
+    } else if(yyTextCopy[1] == 'x') {
+      yyTextCopy = (char*) substring(yyTextCopy, 3, strlen(yyTextCopy));
+      int transformedValue = (int) strtol(yyTextCopy, NULL, 16);
+      itoa(transformedValue, yyTextCopy, 10);
+      
+    }
+      
+  }
+  return yyTextCopy;
 }
