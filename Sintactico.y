@@ -66,7 +66,7 @@ void yyerror(const char* s);
 %union {
   int integer_value;
   float float_value;
-  char string_value[20];
+  char string_value[30];
 }
 
 %%
