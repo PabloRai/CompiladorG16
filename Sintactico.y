@@ -59,6 +59,9 @@ void yyerror(const char* s);
 %type <float_value> FLOAT_CONSTANT
 %type <string_value> STRING_CONSTANT
 %type <string_value> ID
+%type <string_value> INT_TYPE
+%type <string_value> STRING_TYPE
+%type <string_value> FLOAT_TYPE
 
 %union {
   int integer_value;
@@ -150,9 +153,9 @@ variable_declarations:
 variable_declaration: variable_type COLON {printf(":");} variable_list {printf("VARIABLE_LIST");}
   ;
 variable_type:
-   INT_TYPE {printf(" INT_TYPE ");}
-  | FLOAT_TYPE {printf(" FLOAT_TYPE ");}
-  | STRING_TYPE {printf(" STRING_TYPE ");}
+   INT_TYPE {printf(" INT_TYPE %s", $1);}
+  | FLOAT_TYPE {printf(" FLOAT_TYPE %s", $1);}
+  | STRING_TYPE {printf(" STRING_TYPE %s", $1);}
   ;
 variable_list:
    variable_list {printf(" VARIABLE_LIST ");} SEMICOLON {printf(";");} identification {printf(" ID ");}

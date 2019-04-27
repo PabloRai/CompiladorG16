@@ -58,9 +58,9 @@ colon ":"
 {for} {return FOR;}
 {defvar} {return DEFVAR;}
 {enddef} {return ENDDEF;}
-{float} {return FLOAT_TYPE;}
-{int} {return INT_TYPE;}
-{string} {return STRING_TYPE;}
+{float} {strcpy(yylval.string_value, yytext); return FLOAT_TYPE;}
+{int} strcpy(yylval.string_value, yytext); {return INT_TYPE;}
+{string} {strcpy(yylval.string_value, yytext); return STRING_TYPE;}
 {next} {return NEXT;}
 {to} {return TO;}
 {display} {return DISPLAY;}
