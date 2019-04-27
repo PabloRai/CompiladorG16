@@ -1,6 +1,6 @@
 DEFVAR
    FLOAT : a1;a2
-   INT	: b1;b2
+   INT	: b1;b2;b3
    STRING : c1;c2;c3
 ENDDEF
 

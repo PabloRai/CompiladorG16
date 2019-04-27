@@ -88,7 +88,10 @@ symbolNode* insert(char* value) {
         int transformedValue = (int) strtol(literalValue, NULL, 16);
         itoa(transformedValue, valueToInsert, 10);
     }
-    node->value = valueToInsert;
+    if (isConstant == 1) {
+        node->value = valueToInsert;
+    }
+
     node->next = symbolTable;
     symbolTable = node;
     return node;
@@ -98,7 +101,7 @@ symbolNode* findSymbol(char* value) {
     symbolNode* tableNode = symbolTable;
     
     while(tableNode != NULL){
-        if (strcmp(value, tableNode->value) == 0) {
+        if ((tableNode->value != NULL && strcmp(value, tableNode->value) == 0) || (strcmp(value, tableNode->name) == 0)) {
             return tableNode;
         }
         tableNode = tableNode->next;
@@ -112,7 +115,7 @@ void printTable() {
     printf("\n TABLA DE SIMBOLOS \n");
     printf("\nNOMBRE\tTIPODATO\tVALOR\tLONGITUD\n");
     while(current != NULL){
-        printf("%s\t%s\t%s\t%d\n", current->name, current->type, current->value, current->length);
+        printf("%s\t%s\t\t%s\t%d\n", current->name, current->type, current->value, current->length);
         current = current->next;
     }
     
