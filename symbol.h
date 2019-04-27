@@ -27,6 +27,7 @@ void putTypeIdentifierOnSymbolTable();
 void concatenate();
 void removeChar();
 void printTable();
+void saveTable();
 char* substring();
 
 // Symbol Identifier auxiliars
@@ -272,4 +273,22 @@ void checkForAlreadyDeclaredType(char* type) {
 void displayAlreadyDeclaredErrorFor(char* type) {
     fprintf(stderr, "\n ERROR: Variable type %s was already declared, only one is allowed", type);
     exit(1);
+}
+
+
+
+void saveTable() {
+    FILE *file = fopen("ts.txt", "w");
+    if (file == NULL)
+    {
+        printf("Error opening file!\n");
+        exit(1);
+    }
+    symbolNode* current = symbolTable;
+    fprintf(file, "NOMBRE\tTIPODATO\tVALOR\tLONGITUD\n");
+    while(current != NULL){
+        fprintf(file, "%s\t%s\t\t%s\t%d\n", current->name, current->type, current->value, current->length);
+        current = current->next;
+    }
+    fclose(file);
 }

@@ -181,6 +181,7 @@ int main(int argc, char *argv[]) {
 		yyparse();
 	} while(!feof(yyin));
   printTable();
+  saveTable();
 	return 0;
 }
 void yyerror(const char* s) {
