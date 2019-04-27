@@ -1,0 +1,6 @@
+DEFVAR
+   FLOAT : a1;a2
+ENDDEF
+
+
+a1 := 1.0

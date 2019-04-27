@@ -8,17 +8,31 @@ typedef struct listSymbol {
     char* value;
     int length;
     struct listSymbol* next;
-  } symbolNode;
+} symbolNode;
+
+
+typedef struct symbolIdentifier {
+    char *value;
+    struct symbolIdentifier* next;
+} identifierNode;
 
 
 
+
+// Symbol table prototypes
 symbolNode* symbolTable;
 symbolNode* insert();
 symbolNode* findSymbol();
+void putTypeIdentifierOnSymbolTable();
 void concatenate();
 void removeChar();
 void printTable();
 
+// Symbol Identifier auxiliars
+identifierNode* identifierList;
+identifierNode* insertIdentifier();
+identifierNode* findIdentifier();
+void clearIdentifierList();
 
 
 
@@ -50,7 +64,6 @@ symbolNode* insert(char* value) {
     if (isConstant == 1) {
         node->name[0] = '_' ;
         concatenate(node->name, valueToInsert);
-        printf("\nAsi quedo %s\n", node->name);
     } else {
         strcpy(node->name, valueToInsert);
     }
@@ -112,4 +125,44 @@ void removeChar(char *s, int c){
           s[j++] = s[i]; 
       
     s[j] = '\0'; 
-} 
+}
+
+
+identifierNode* insertIdentifier(char *name) {
+    identifierNode* foundNode = findIdentifier(name);
+    if (foundNode != NULL) {
+        printf("\n --- FOUND IDENTIFIER %s ---- \n", foundNode->value);
+        return foundNode;
+    }
+
+
+    identifierNode* node = (identifierNode*) malloc(sizeof(identifierNode));
+    int len = strlen(name);
+    char* valueToInsert = malloc(len+1);
+    strcpy(valueToInsert, name);
+
+    printf("\n --- INSERTED IDENTIFIER %s ---- \n", valueToInsert);
+    node->value = valueToInsert;
+    node->next = identifierList;
+    identifierList = node;
+    return node;
+}
+
+
+
+identifierNode* findIdentifier(char* value) {
+    identifierNode* identifierNode = identifierList;
+    while(identifierNode != NULL) {
+        if (strcmp(value, identifierNode->value) == 0) {
+            return identifierNode;
+        }
+        identifierNode = identifierNode->next;
+    }
+    return NULL;
+}
+
+
+
+void putTypeIdentifierOnSymbolTable(char* type) {
+
+}

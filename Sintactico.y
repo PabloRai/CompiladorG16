@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "symbol.h"
+#include <string.h>
 
 #define YYDEBUG 1
 extern int yylex();
@@ -9,6 +10,8 @@ extern int yyparse();
 extern yylineno;
 extern FILE* yyin;
 void yyerror(const char* s);
+void saveIdentifierDeclarationType();
+char currentIdentifierDeclarationType[7];
 %}
 
 
@@ -93,19 +96,19 @@ algorithm: decision {printf(" DECISION ");}
 
 decision: IF {printf(" IF ");} OPENING_PARENTHESIS {printf(" ( ");} condition CLOSING_PARENTHESIS {printf(" ) ");} OPENING_KEY {printf(" { ");} algorithms {printf(" ALGORITHM ");} CLOSING_KEY {printf(" } ");};
 
-assignment: identification ASSIGNMENT_OPERATOR expression;
+assignment: identifier ASSIGNMENT_OPERATOR expression;
 
 while_loop: WHILE {printf(" WHILE ");} OPENING_PARENTHESIS {printf(" ( ");} condition CLOSING_PARENTHESIS {printf(" ) ");} OPENING_KEY {printf(" { ");} algorithms {printf(" ALGORITHM ");} CLOSING_KEY {printf(" } ");};
 
-for_loop: FOR identification ASSIGNMENT_OPERATOR expression TO expression integer_constant algorithms NEXT identification
-  | FOR identification ASSIGNMENT_OPERATOR expression TO expression algorithms NEXT identification
+for_loop: FOR identifier ASSIGNMENT_OPERATOR expression TO expression integer_constant algorithms NEXT identifier
+  | FOR identifier ASSIGNMENT_OPERATOR expression TO expression algorithms NEXT identifier
   ;
 
-display: DISPLAY identification
+display: DISPLAY identifier
   | DISPLAY constant
   ;
 
-get: GET identification;
+get: GET identifier;
 
 condition: comparation {printf(" comparation ");}
   | comparation logic_operator comparation
@@ -133,7 +136,7 @@ term: term MULTIPLIER_OPERATOR factor
   | factor
   ;
 
-factor: identification
+factor: identifier
   | constant
   | OPENING_PARENTHESIS expression CLOSING_PARENTHESIS
   ;
@@ -150,19 +153,19 @@ variable_declarations:
    variable_declarations variable_declaration
   | variable_declaration
 
-variable_declaration: variable_type COLON {printf(":");} variable_list {printf("VARIABLE_LIST");}
+variable_declaration: variable_type COLON {printf(":");} variable_list {printf("VARIABLE_LIST"); saveIdentifierDeclarationType(currentIdentifierDeclarationType);}
   ;
 variable_type:
-   INT_TYPE {printf(" INT_TYPE %s", $1);}
-  | FLOAT_TYPE {printf(" FLOAT_TYPE %s", $1);}
-  | STRING_TYPE {printf(" STRING_TYPE %s", $1);}
+   INT_TYPE {printf(" INT_TYPE %s", $1); saveIdentifierDeclarationType($1);}
+  | FLOAT_TYPE {printf(" FLOAT_TYPE %s", $1); saveIdentifierDeclarationType($1);}
+  | STRING_TYPE {printf(" STRING_TYPE %s", $1); saveIdentifierDeclarationType($1);}
   ;
 variable_list:
-   variable_list {printf(" VARIABLE_LIST ");} SEMICOLON {printf(";");} identification {printf(" ID ");}
-  | identification
+   variable_list {printf(" VARIABLE_LIST ");} SEMICOLON {printf(";");} identifier {printf(" ID ");}
+  | identifier
   ;
 
-identification: ID {printf(" ID %s ", $1);};
+identifier: ID {printf(" ID %s ", $1); insertIdentifier($1);};
 
 integer_constant: INTEGER_CONSTANT {printf(" INTEGER_CONSTANT %d ", $1);};
 
@@ -183,4 +186,8 @@ int main(int argc, char *argv[]) {
 void yyerror(const char* s) {
 	fprintf(stderr, "Parse error: %s\n", s);
 	exit(1);
+}
+
+void saveIdentifierDeclarationType(char* identiferName) {
+  strcpy(currentIdentifierDeclarationType, identiferName);
 }
