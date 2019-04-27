@@ -80,6 +80,7 @@ symbolNode* insert(char* value) {
     }
 
     if(shouldApplyBase2Transformation == 1) {
+        // TODO: Refactor this, extract behaviour into function..
         char* literalValue = substring(valueToInsert, 3, strlen(valueToInsert));
         int transformedValue = (int) strtol(literalValue, NULL, 2);
         itoa(transformedValue, valueToInsert, 10);
