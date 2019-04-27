@@ -209,7 +209,7 @@ void putTypeIdentifierOnSymbolTable(char* type) {
             int len = strlen(type);
             char* valueToInsert = malloc(len+1);
             strcpy(valueToInsert, type);
-            printf("\n --- PUTING TYPE %s ON SYMBOL %s -- \n", valueToInsert, symbol->name);
+        
             
             symbol->type = valueToInsert;
         }

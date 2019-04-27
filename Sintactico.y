@@ -96,7 +96,7 @@ algorithm: decision {printf(" DECISION ");}
 
 decision: IF {printf(" IF ");} OPENING_PARENTHESIS {printf(" ( ");} condition CLOSING_PARENTHESIS {printf(" ) ");} OPENING_KEY {printf(" { ");} algorithms {printf(" ALGORITHM ");} CLOSING_KEY {printf(" } ");};
 
-assignment: identifier ASSIGNMENT_OPERATOR expression;
+assignment: identifier ASSIGNMENT_OPERATOR {printf(" := ");} expression;
 
 while_loop: WHILE {printf(" WHILE ");} OPENING_PARENTHESIS {printf(" ( ");} condition CLOSING_PARENTHESIS {printf(" ) ");} OPENING_KEY {printf(" { ");} algorithms {printf(" ALGORITHM ");} CLOSING_KEY {printf(" } ");};
 
@@ -141,9 +141,9 @@ factor: identifier
   | OPENING_PARENTHESIS expression CLOSING_PARENTHESIS
   ;
 
-constant: INTEGER_CONSTANT {printf("INTEGER_CONSTANT %d", $1);}
-  | FLOAT_CONSTANT {printf("FLOAT_CONSTANT %f", $1);}
-  | STRING_CONSTANT {printf("STRING_CONSTANT %s", $1);}
+constant: INTEGER_CONSTANT {printf(" %d", $1);}
+  | FLOAT_CONSTANT {printf(" %f", $1);}
+  | STRING_CONSTANT {printf(" %s", $1);}
   ;
 
 variable_declaration_block: DEFVAR {printf("DEFVAR\n");} variable_declarations ENDDEF {printf("\nENDDEF\n");}
@@ -153,21 +153,21 @@ variable_declarations:
    variable_declarations variable_declaration
   | variable_declaration
 
-variable_declaration: variable_type COLON {printf(":");} variable_list {printf("VARIABLE_LIST"); putTypeIdentifierOnSymbolTable(currentIdentifierDeclarationType);}
+variable_declaration: variable_type COLON {printf(":");} variable_list {putTypeIdentifierOnSymbolTable(currentIdentifierDeclarationType);}
   ;
 variable_type:
-   INT_TYPE {printf(" INT_TYPE %s", $1); saveIdentifierDeclarationType($1);}
-  | FLOAT_TYPE {printf(" FLOAT_TYPE %s", $1); saveIdentifierDeclarationType($1);}
-  | STRING_TYPE {printf(" STRING_TYPE %s", $1); saveIdentifierDeclarationType($1);}
+   INT_TYPE {printf(" %s", $1); saveIdentifierDeclarationType($1);}
+  | FLOAT_TYPE {printf(" %s", $1); saveIdentifierDeclarationType($1);}
+  | STRING_TYPE {printf(" %s", $1); saveIdentifierDeclarationType($1);}
   ;
 variable_list:
-   variable_list {printf(" VARIABLE_LIST ");} SEMICOLON {printf(";");} identifier {printf(" ID ");}
+   variable_list SEMICOLON {printf(";");} identifier 
   | identifier
   ;
 
-identifier: ID {printf(" ID %s ", $1); insertIdentifier($1);};
+identifier: ID {printf("  %s ", $1); insertIdentifier($1);};
 
-integer_constant: INTEGER_CONSTANT {printf(" INTEGER_CONSTANT %d ", $1);};
+integer_constant: INTEGER_CONSTANT {printf("  %d ", $1);};
 
 
 %%
