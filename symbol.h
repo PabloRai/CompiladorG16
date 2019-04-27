@@ -35,6 +35,12 @@ identifierNode* insertIdentifier();
 identifierNode* findIdentifier();
 void clearIdentifierList();
 
+// Not proud of this..
+int alreadyDeclarerdFloatIdentifiers = 0;
+int alreadyDeclarerdIntegerIdentifiers = 0;
+int alreadyDeclarerdStringIdentifiers = 0;
+void checkForAlreadyDeclaredType();
+void displayAlreadyDeclaredErrorFor();
 
 
 symbolNode* insert(char* value) {
@@ -186,16 +192,23 @@ identifierNode* findIdentifier(char* value) {
 
 
 void putTypeIdentifierOnSymbolTable(char* type) {
+    checkForAlreadyDeclaredType(type);
+
     identifierNode* identifierNode = identifierList;
     
     while(identifierNode != NULL) {
         symbolNode* symbol = findSymbol(identifierNode->value);
         // Symbol should never be NULL but just in case..
         if (symbol != NULL) {
+            if (symbol->type != NULL) {
+                fprintf(stderr, "\n ERROR: Variable %s has been already declared", symbol->name);
+                exit(1);
+            }
+            
             int len = strlen(type);
             char* valueToInsert = malloc(len+1);
             strcpy(valueToInsert, type);
-            printf("\n --- PUTING TYPE %s ON SYMBOL %s -- \n", valueToInsert, symbol->value);
+            printf("\n --- PUTING TYPE %s ON SYMBOL %s -- \n", valueToInsert, symbol->name);
             
             symbol->type = valueToInsert;
         }
@@ -233,4 +246,30 @@ char* substring(char *string, int position, int length)
    *(pointer+c) = '\0';
  
    return pointer;
+}
+
+
+void checkForAlreadyDeclaredType(char* type) {
+    if(strcmp("FLOAT", type) == 0) {
+        if(alreadyDeclarerdFloatIdentifiers == 1) {
+            displayAlreadyDeclaredErrorFor(type);
+        }
+        alreadyDeclarerdFloatIdentifiers = 1;
+    } else if(strcmp("INT", type) == 0) {
+        if(alreadyDeclarerdIntegerIdentifiers == 1) {
+            displayAlreadyDeclaredErrorFor(type);
+        }
+        alreadyDeclarerdIntegerIdentifiers = 1;
+    } else if(strcmp("STRING", type) == 0) {
+        if(alreadyDeclarerdStringIdentifiers == 1) {
+            displayAlreadyDeclaredErrorFor(type);
+        }
+        alreadyDeclarerdStringIdentifiers = 1;
+    }
+}
+
+
+void displayAlreadyDeclaredErrorFor(char* type) {
+    fprintf(stderr, "\n ERROR: Variable type %s was already declared, only one is allowed", type);
+    exit(1);
 }
