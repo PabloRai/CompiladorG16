@@ -109,9 +109,10 @@ symbolNode* findSymbol(char* value) {
 
 void printTable() {
     symbolNode* current = symbolTable;
-    printf("\n TABLITA \n");
+    printf("\n TABLA DE SIMBOLOS \n");
+    printf("\nNOMBRE\tTIPODATO\tVALOR\tLONGITUD\n");
     while(current != NULL){
-        printf("%s %s %d %s\n", current->value, current->name, current->length, current->type);
+        printf("%s\t%s\t%s\t%d\n", current->name, current->type, current->value, current->length);
         current = current->next;
     }
     
