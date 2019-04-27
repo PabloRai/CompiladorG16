@@ -153,7 +153,7 @@ variable_declarations:
    variable_declarations variable_declaration
   | variable_declaration
 
-variable_declaration: variable_type COLON {printf(":");} variable_list {printf("VARIABLE_LIST"); saveIdentifierDeclarationType(currentIdentifierDeclarationType);}
+variable_declaration: variable_type COLON {printf(":");} variable_list {printf("VARIABLE_LIST"); putTypeIdentifierOnSymbolTable(currentIdentifierDeclarationType);}
   ;
 variable_type:
    INT_TYPE {printf(" INT_TYPE %s", $1); saveIdentifierDeclarationType($1);}

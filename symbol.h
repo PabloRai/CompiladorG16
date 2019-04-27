@@ -92,7 +92,7 @@ void printTable() {
     symbolNode* current = symbolTable;
     printf("\n TABLITA \n");
     while(current != NULL){
-        printf("%s %s %d\n", current->value, current->name, current->length);
+        printf("%s %s %d %s\n", current->value, current->name, current->length, current->type);
         current = current->next;
     }
     
@@ -131,7 +131,6 @@ void removeChar(char *s, int c){
 identifierNode* insertIdentifier(char *name) {
     identifierNode* foundNode = findIdentifier(name);
     if (foundNode != NULL) {
-        printf("\n --- FOUND IDENTIFIER %s ---- \n", foundNode->value);
         return foundNode;
     }
 
@@ -141,7 +140,6 @@ identifierNode* insertIdentifier(char *name) {
     char* valueToInsert = malloc(len+1);
     strcpy(valueToInsert, name);
 
-    printf("\n --- INSERTED IDENTIFIER %s ---- \n", valueToInsert);
     node->value = valueToInsert;
     node->next = identifierList;
     identifierList = node;
@@ -164,5 +162,25 @@ identifierNode* findIdentifier(char* value) {
 
 
 void putTypeIdentifierOnSymbolTable(char* type) {
+    identifierNode* identifierNode = identifierList;
+    
+    while(identifierNode != NULL) {
+        symbolNode* symbol = findSymbol(identifierNode->value);
+        // Symbol should never be NULL but just in case..
+        if (symbol != NULL) {
+            int len = strlen(type);
+            char* valueToInsert = malloc(len+1);
+            strcpy(valueToInsert, type);
+            printf("\n --- PUTING TYPE %s ON SYMBOL %s -- \n", valueToInsert, symbol->value);
+            
+            symbol->type = valueToInsert;
+        }
+        
+        identifierNode = identifierNode->next;
+    }
+    clearIdentifierList();
+}
 
+void clearIdentifierList() {
+    identifierList = NULL;
 }
