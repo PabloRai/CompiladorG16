@@ -7,7 +7,7 @@ ENDDEF
 FOR b1 := 1 TO 5
   a2 := 3
 NEXT b1
-
+*/ Así son los comentarios en el 1°Cuat de LyC */ Comentario /* /*
 
 FOR b1 := 1 TO 5 2
   a2 := 3
