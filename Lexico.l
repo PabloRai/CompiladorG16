@@ -7,7 +7,7 @@
   void checkStringConstantLimits();
   void checkFloatConstantLimits();
   void checkIntegerConstantLimits();
-  char* subsTringIfNeeded();
+  char* substringIfNeeded();
 %}
 %option noyywrap
 %option yylineno
@@ -72,7 +72,7 @@ colon ":"
 {opening_key} {return OPENING_KEY;}
 {opening_square_bracket} {return OPENING_SQUARE_BRACKET;}
 {closing_square_bracket} {return CLOSING_SQUARE_BRACKET;}
-{integer_constant} {checkIntegerConstantLimits(); yylval.integer_value = atoi(subsTringIfNeeded()); insert(yytext); return INTEGER_CONSTANT;}
+{integer_constant} {checkIntegerConstantLimits(); yylval.integer_value = atoi(substringIfNeeded()); insert(yytext); return INTEGER_CONSTANT;}
 {string_constant} {checkStringConstantLimits(); strcpy(yylval.string_value, yytext); insert(yytext); return STRING_CONSTANT;}
 {float_constant} {checkFloatConstantLimits(); yylval.float_value = atof(yytext); insert(yytext); return FLOAT_CONSTANT;}
 {id} {strcpy(yylval.string_value, yytext); insert(yytext); return ID;}
@@ -124,7 +124,7 @@ void checkIntegerConstantLimits() {
 }
 
 
-char* subsTringIfNeeded() {
+char* substringIfNeeded() {
   char* yyTextCopy = strdup(yytext);
  
   if(yyTextCopy[0] == '0') {
