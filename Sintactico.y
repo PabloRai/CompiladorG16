@@ -107,7 +107,9 @@ for_loop: FOR ID ASSIGNMENT_OPERATOR expression TO expression INTEGER_CONSTANT a
   ;
 
 display: DISPLAY ID
-  | DISPLAY constant
+  | DISPLAY INTEGER_CONSTANT {printf(" %d", $2);}
+  | DISPLAY FLOAT_CONSTANT {printf(" %f", $2);}
+  | DISPLAY STRING_CONSTANT {printf(" %s", $2);}
   ;
 
 get: GET ID;
@@ -139,14 +141,13 @@ term: term MULTIPLIER_OPERATOR factor
   ;
 
 factor: ID
-  | constant
+  | INTEGER_CONSTANT {printf(" %d", $1);}
+  | FLOAT_CONSTANT {printf(" %f", $1);}
+  | STRING_CONSTANT {printf(" %s", $1);}
   | OPENING_PARENTHESIS expression CLOSING_PARENTHESIS
   ;
 
-constant: INTEGER_CONSTANT {printf(" %d", $1);}
-  | FLOAT_CONSTANT {printf(" %f", $1);}
-  | STRING_CONSTANT {printf(" %s", $1);}
-  ;
+
 
 variable_declaration_block: DEFVAR {printf("DEFVAR\n");} variable_declarations ENDDEF {printf("\nENDDEF\n");}
   ;

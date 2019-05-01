@@ -1,7 +1,6 @@
 NOMBRE	TIPODATO	VALOR	LONGITUD
 _9.2	(null)		9.2	0
 _sarasa	(null)		sarasa	6
-pepe	(null)		(null)	0
 _0xABF	(null)		2751	0
 _0b110	(null)		6	0
 _9	(null)		9	0

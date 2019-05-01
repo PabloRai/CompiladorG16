@@ -36,7 +36,7 @@ IF (a1 > b2) {
 
 IF (a1 > b2) {
  b2 := 3
- GET pepe
+ GET b1
 	IF (a1 > b2) {
 		a1 := 9
   }
