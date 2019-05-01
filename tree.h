@@ -7,19 +7,29 @@
 
 void printAST();
 
+
 typedef struct treeNode {
     char* value;
     struct treeNode* left;
     struct treeNode* right;
 } ast;
 
+ast* getCopy();
+
 
 ast* newNode(char* operation, ast* leftNode, ast* rightNode) {
+   
     ast* node = (ast*) malloc(sizeof(ast));
     
+    ast* leftNodeCopy = getCopy(leftNode);
+    ast* rightNodeCopy = getCopy(rightNode);
+    
+    
     node->value = operation;
-    node->left = leftNode;
-    node->right = rightNode;
+    node->left = leftNodeCopy;
+    node->right = rightNodeCopy;
+    printf("\n  NODO: %s LEFT: %s RIGHT: %s \n", operation, node->left->value, node->right->value);
+    
     return node;
 }
 
@@ -46,4 +56,17 @@ void printAST(ast* tree) {
      /* now recur on right child */
      printAST(tree->right); 
 } 
+
+
+ast* getCopy(ast* node) {
+    if (node == NULL) {
+        return NULL;
+    }
+    
+    ast* nodeCopy = (ast*) malloc(sizeof(ast));
+    nodeCopy->value = strdup(node->value);
+    nodeCopy->left = node->left;
+    nodeCopy->right = node->right;
+    return nodeCopy;
+}
 
