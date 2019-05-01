@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h> 
+#include <stdio.h>
 
 typedef struct listSymbol {
     char name[220];
@@ -29,6 +30,7 @@ void removeChar();
 void printTable();
 void saveTable();
 char* substring();
+char* getSymbolName();
 
 // Symbol Identifier auxiliars
 identifierNode* identifierList;
@@ -48,7 +50,7 @@ symbolNode* insert(char* value) {
     
     symbolNode* node = (symbolNode*) malloc(sizeof(symbolNode));
     int len = strlen(value);
-    char* valueToInsert = malloc(len+1);
+    char* valueToInsert = (char*) malloc(len+1);
     strcpy(valueToInsert, value);
     
     // Is it a string constant?
@@ -164,7 +166,7 @@ identifierNode* insertIdentifier(char *name) {
 
     identifierNode* node = (identifierNode*) malloc(sizeof(identifierNode));
     int len = strlen(name);
-    char* valueToInsert = malloc(len+1);
+    char* valueToInsert = (char *) malloc(len+1);
     strcpy(valueToInsert, name);
 
     node->value = valueToInsert;
@@ -202,7 +204,7 @@ void putTypeIdentifierOnSymbolTable(char* type) {
             }
             
             int len = strlen(type);
-            char* valueToInsert = malloc(len+1);
+            char* valueToInsert = (char*) malloc(len+1);
             strcpy(valueToInsert, type);
         
             
@@ -225,7 +227,7 @@ char* substring(char *string, int position, int length)
    char *pointer;
    int c;
  
-   pointer = malloc(length+1);
+   pointer = (char*) malloc(length+1);
    
    if (pointer == NULL)
    {
@@ -269,4 +271,32 @@ void saveTable() {
         current = current->next;
     }
     fclose(file);
+}
+
+
+char* getSymbolName(void *symbolPointer, int type) {
+    char symbol[220];
+    int integerValue;
+    float floatValue;
+    switch (type) {
+        case 1:
+            integerValue = *(int*)symbolPointer;
+            itoa(integerValue, symbol, 10);
+            break;
+        case 2:
+            floatValue = *(float*)symbolPointer;
+            gcvt (floatValue, 7, symbol);
+            break; 
+        case 3:
+            strcpy(symbol, (char*)symbolPointer);
+            removeChar(symbol, '"');
+    }
+    symbolNode* node = findSymbol(symbol);
+    if (node == NULL) {
+        fprintf(stderr, "\n ERROR: symbol %s not found", symbol);
+        exit(1);
+    }
+
+    return strdup(node->name);
+    
 }

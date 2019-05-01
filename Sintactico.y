@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "symbol.h"
+#include "tree.h"
 #include <string.h>
 
 #define YYDEBUG 1
@@ -67,11 +68,13 @@ void compareIdentificators();
 %type <string_value> INT_TYPE
 %type <string_value> STRING_TYPE
 %type <string_value> FLOAT_TYPE
+%type <ast> expression term factor assignment
 
 %union {
   int integer_value;
   float float_value;
   char string_value[30];
+  struct treeNode* ast;
 }
 
 %%
@@ -98,7 +101,7 @@ algorithm: decision {printf(" DECISION ");}
 
 decision: IF {printf(" IF ");} OPENING_PARENTHESIS {printf(" ( ");} condition CLOSING_PARENTHESIS {printf(" ) ");} OPENING_KEY {printf(" { ");} algorithms {printf(" ALGORITHM ");} CLOSING_KEY {printf(" } ");};
 
-assignment: ID ASSIGNMENT_OPERATOR {printf(" := ");} expression {validateIdIsDeclared($1);};
+assignment: ID ASSIGNMENT_OPERATOR expression {printf(" := "); validateIdIsDeclared($1); $$ = newNode("=", newLeaf($1), $3);};
 
 while_loop: WHILE {printf(" WHILE ");} OPENING_PARENTHESIS {printf(" ( ");} condition CLOSING_PARENTHESIS {printf(" ) ");} OPENING_KEY {printf(" { ");} algorithms {printf(" ALGORITHM ");} CLOSING_KEY {printf(" } ");};
 
@@ -130,21 +133,21 @@ logic_operator: EQUALS_LOGIC_OPERATOR
   | LOWER_OR_EQUAL_LOGIC_OPERATOR
   ;
 
-expression: expression SUM_OPERATOR term
-  | expression MINUS_OPERATOR term
-  | term
+expression: expression SUM_OPERATOR term {$$ = newNode("+", $1, $3);}
+  | expression MINUS_OPERATOR term {$$ = newNode("-", $1, $3);}
+  | term {$$ = $1;}
   ;
 
-term: term MULTIPLIER_OPERATOR factor
-  | term DIVIDE_OPERATOR factor
-  | factor
+term: term MULTIPLIER_OPERATOR factor {$$ = newNode("*", $1, $3);}
+  | term DIVIDE_OPERATOR factor {$$ = newNode("/", $1, $3);}
+  | factor {$$ = $1;}
   ;
 
-factor: ID
-  | INTEGER_CONSTANT {printf(" %d", $1);}
-  | FLOAT_CONSTANT {printf(" %f", $1);}
-  | STRING_CONSTANT {printf(" %s", $1);}
-  | OPENING_PARENTHESIS expression CLOSING_PARENTHESIS
+factor: ID {$$ = newLeaf($1);}
+  | INTEGER_CONSTANT {$$ = newLeaf(getSymbolName(&($1),1)); printf(" %d", $1);}
+  | FLOAT_CONSTANT {$$ = newLeaf(getSymbolName(&($1),2)); printf(" %f", $1);}
+  | STRING_CONSTANT {$$ = newLeaf(getSymbolName($1,3)); printf(" %s", $1);}
+  | OPENING_PARENTHESIS expression CLOSING_PARENTHESIS {$$ = $2;}
   ;
 
 
