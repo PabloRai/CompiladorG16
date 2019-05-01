@@ -13,6 +13,7 @@ void yyerror(const char* s);
 void saveIdentifierDeclarationType();
 char currentIdentifierDeclarationType[7];
 void validateIdIsDeclared();
+void compareIdentificators();
 %}
 
 
@@ -101,8 +102,8 @@ assignment: ID ASSIGNMENT_OPERATOR {printf(" := ");} expression {validateIdIsDec
 
 while_loop: WHILE {printf(" WHILE ");} OPENING_PARENTHESIS {printf(" ( ");} condition CLOSING_PARENTHESIS {printf(" ) ");} OPENING_KEY {printf(" { ");} algorithms {printf(" ALGORITHM ");} CLOSING_KEY {printf(" } ");};
 
-for_loop: FOR ID ASSIGNMENT_OPERATOR expression TO expression INTEGER_CONSTANT {printf("  %d ", $7);} algorithms NEXT ID
-  | FOR ID ASSIGNMENT_OPERATOR expression TO expression algorithms NEXT ID
+for_loop: FOR ID ASSIGNMENT_OPERATOR expression TO expression INTEGER_CONSTANT algorithms NEXT ID {compareIdentificators($2, $10);}
+  | FOR ID ASSIGNMENT_OPERATOR expression TO expression algorithms NEXT ID {compareIdentificators($2, $9);}
   ;
 
 display: DISPLAY ID
@@ -194,6 +195,13 @@ void validateIdIsDeclared(char* id) {
   symbolNode* symbol = findSymbol(id);
   if (symbol == NULL || symbol->type == NULL) {
     fprintf(stderr, "\nVariable: %s is not declared on the declaration block on line %d\n", id, yylineno);
+    exit(1);
+  }
+}
+
+void compareIdentificators(char* firstIdentificator, char* secondIdentificator) {
+  if (strcmp(firstIdentificator, secondIdentificator) != 0) {
+    fprintf(stderr, "\n Identificators are not the same, line: %d\n", yylineno);
     exit(1);
   }
 }
