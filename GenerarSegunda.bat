@@ -5,7 +5,7 @@ c:\GnuWin32\bin\flex Lexico.l
 echo "Creating y.tab.c"
 pause
 c:\GnuWin32\bin\bison -dyv Sintactico.y
-echo "Creating Primera.exe"
+echo "Creating Segunda.exe"
 pause
 c:\MinGW\bin\gcc.exe lex.yy.c y.tab.c -o Segunda.exe
 echo "Cleaning"

@@ -4,6 +4,9 @@ DEFVAR
    STRING : c1;c2;c3
 ENDDEF
 
+
+a1 := 9.2
+
 FOR b1 := 1 TO 5
   a2 := 3
 NEXT b1

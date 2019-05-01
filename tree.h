@@ -6,6 +6,8 @@
 // Ast stands for Abstract Syntax Tree
 
 void printAST();
+void saveAST();
+void loopAndWriteASTIntoFile();
 
 typedef struct treeNode {
     char* value;
@@ -46,4 +48,32 @@ void printAST(ast* tree) {
      /* now recur on right child */
      printAST(tree->right); 
 } 
+
+
+void saveAST(ast* tree) {
+    FILE *file = fopen("intermedia.txt", "w");
+    if (file == NULL)
+    {
+        printf("Error opening file!\n");
+        exit(1);
+    }
+
+    loopAndWriteASTIntoFile(tree, file);
+    fclose(file);
+}
+
+
+void loopAndWriteASTIntoFile(ast* tree, FILE* file) { 
+     if (tree == NULL) 
+          return; 
+  
+     /* first recur on left child */
+     printAST(tree->left); 
+  
+     /* then print the data of node */
+     fprintf(file, "%s ", tree->value);   
+  
+     /* now recur on right child */
+     printAST(tree->right); 
+}
 

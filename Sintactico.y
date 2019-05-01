@@ -101,7 +101,7 @@ ast* tree;
 program: sentence {printf("\nSUCCESSFUL COMPILATION\n"); $$ = $1; tree = $$;}
   ;
 
-sentence: sentence algorithm {printf(" SENTENCE ALGORITHM "); $$ = $2;}
+sentence: variable_declaration_block algorithms {printf(" SENTENCE ALGORITHM "); $$ = $2;}
   | variable_declaration_block {printf(" VARIABLE DECLARATION ");}
   ;
 
@@ -210,6 +210,7 @@ int main(int argc, char *argv[]) {
   saveTable();
   printf("\n --- INTERMEDIA --- \n");
   printAST(tree);
+  saveAST(tree);
 	return 0;
 }
 void yyerror(const char* s) {

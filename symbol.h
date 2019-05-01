@@ -78,8 +78,10 @@ symbolNode* insert(char* value) {
     }
     
     if (isConstant == 1) {
+        strcpy(node->name, "");
         node->name[0] = '_' ;
         concatenate(node->name, valueToInsert);
+        printf("\n NAME: %s \n", node->name);
     } else {
         strcpy(node->name, valueToInsert);
     }
@@ -131,9 +133,9 @@ void printTable() {
 
 void concatenate(char* original, char* add) {
   
-  while(*original) {
-      original++;
-   }
+  
+  original++;
+   
      
    while(*add){
       *original = *add;
