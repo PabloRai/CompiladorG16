@@ -26,8 +26,8 @@ ast* newNode(char* operation, ast* leftNode, ast* rightNode) {
 
 ast* newLeaf(char* value) {
     ast* node = (ast*) malloc(sizeof(ast));
-    
-    node->value = value;
+   
+    node->value = strdup(value);
     node->left = NULL;
     node->right = NULL;
     return node;

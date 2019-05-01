@@ -15,6 +15,8 @@ void saveIdentifierDeclarationType();
 char currentIdentifierDeclarationType[7];
 void validateIdIsDeclared();
 void compareIdentificators();
+
+ast* tree;
 %}
 
 
@@ -79,6 +81,10 @@ void compareIdentificators();
 %type <ast> for_loop
 %type <ast> algorithms
 %type <ast> algorithm
+%type <ast> while_loop
+%type <ast> decision
+%type <ast> sentence
+%type <ast> program
 %type <auxLogicOperator> logic_operator
 
 %union {
@@ -92,10 +98,10 @@ void compareIdentificators();
 %%
 
 
-program: sentence {printf("\nSUCCESSFUL COMPILATION\n");}
+program: sentence {printf("\nSUCCESSFUL COMPILATION\n"); $$ = $1; tree = $$;}
   ;
 
-sentence: sentence algorithm {printf(" SENTENCE ALGORITHM ");}
+sentence: sentence algorithm {printf(" SENTENCE ALGORITHM "); $$ = $2;}
   | variable_declaration_block {printf(" VARIABLE DECLARATION ");}
   ;
 
@@ -103,19 +109,19 @@ algorithms: algorithm {$$ = $1;}
   | algorithms algorithm {$$ = newNode("CUERPO_ALGORITMH", $1, $2);}
   ;
 
-algorithm: decision {printf(" DECISION ");}
-  | assignment {printf(" ASSIGNMENT ");}
-  | while_loop {printf(" WHILE LOOP ");}
-  | for_loop {printf(" FOR LOOP ");}
-  | display {printf(" DISPLAY ");}
-  | get {printf(" GET ");}
+algorithm: decision {printf(" DECISION "); $$ = $1;}
+  | assignment {printf(" ASSIGNMENT "); $$ = $1;}
+  | while_loop {printf(" WHILE LOOP "); $$ = $1;}
+  | for_loop {printf(" FOR LOOP "); $$ = $1;}
+  | display {printf(" DISPLAY "); $$ = $1;}
+  | get {printf(" GET "); $$ = $1;}
   ;
 
-decision: IF {printf(" IF ");} OPENING_PARENTHESIS {printf(" ( ");} condition CLOSING_PARENTHESIS {printf(" ) ");} OPENING_KEY {printf(" { ");} algorithms {printf(" ALGORITHM ");} CLOSING_KEY {printf(" } ");};
+decision: IF OPENING_PARENTHESIS condition CLOSING_PARENTHESIS OPENING_KEY algorithms CLOSING_KEY {$$ = newNode("IF", $3, $6);};
 
 assignment: ID ASSIGNMENT_OPERATOR expression {printf(" := "); validateIdIsDeclared($1); $$ = newNode("=", newLeaf($1), $3);};
 
-while_loop: WHILE {printf(" WHILE ");} OPENING_PARENTHESIS {printf(" ( ");} condition CLOSING_PARENTHESIS {printf(" ) ");} OPENING_KEY {printf(" { ");} algorithms {printf(" ALGORITHM ");} CLOSING_KEY {printf(" } ");};
+while_loop: WHILE OPENING_PARENTHESIS condition CLOSING_PARENTHESIS OPENING_KEY algorithms CLOSING_KEY {$$ = newNode("WHILE", $3, $6);};
 
 for_loop: FOR ID ASSIGNMENT_OPERATOR expression TO expression INTEGER_CONSTANT algorithms NEXT ID {
     compareIdentificators($2, $10);
@@ -146,7 +152,7 @@ comparation: expression  logic_operator  expression {$$ = newNode($2, $1, $3);pr
 logic_operator: EQUALS_LOGIC_OPERATOR {$$ = "=";}
   | NOT_EQUALS_LOGIC_OPERATOR {$$ = "!=";}
   | GREATER_LOGIC_OPERATOR {$$ = ">";}
-  | GREATER_OR_EQUAL_LOGIC_OPERATOR {">=";}
+  | GREATER_OR_EQUAL_LOGIC_OPERATOR {$$ = ">=";}
   | LOWER_LOGIC_OPERATOR {$$ = "<";}
   | LOWER_OR_EQUAL_LOGIC_OPERATOR {$$ = "<=";}
   ;
@@ -202,6 +208,8 @@ int main(int argc, char *argv[]) {
 	} while(!feof(yyin));
   printTable();
   saveTable();
+  printf("\n --- INTERMEDIA --- \n");
+  printAST(tree);
 	return 0;
 }
 void yyerror(const char* s) {
