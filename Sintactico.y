@@ -68,13 +68,25 @@ void compareIdentificators();
 %type <string_value> INT_TYPE
 %type <string_value> STRING_TYPE
 %type <string_value> FLOAT_TYPE
-%type <ast> expression term factor assignment logic_operator
+%type <ast> expression
+%type <ast> term
+%type <ast> factor
+%type <ast> assignment
+%type <ast> comparation
+%type <ast> condition
+%type <ast> get
+%type <ast> display
+%type <ast> for_loop
+%type <ast> algorithms
+%type <ast> algorithm
+%type <auxLogicOperator> logic_operator
 
 %union {
   int integer_value;
   float float_value;
   char string_value[30];
   struct treeNode* ast;
+  char* auxLogicOperator;
 }
 
 %%
@@ -87,8 +99,8 @@ sentence: sentence algorithm {printf(" SENTENCE ALGORITHM ");}
   | variable_declaration_block {printf(" VARIABLE DECLARATION ");}
   ;
 
-algorithms: algorithm
-  | algorithms algorithm
+algorithms: algorithm {$$ = $1;}
+  | algorithms algorithm {$$ = newNode("CUERPO_ALGORITMH", $1, $2);}
   ;
 
 algorithm: decision {printf(" DECISION ");}
@@ -105,32 +117,38 @@ assignment: ID ASSIGNMENT_OPERATOR expression {printf(" := "); validateIdIsDecla
 
 while_loop: WHILE {printf(" WHILE ");} OPENING_PARENTHESIS {printf(" ( ");} condition CLOSING_PARENTHESIS {printf(" ) ");} OPENING_KEY {printf(" { ");} algorithms {printf(" ALGORITHM ");} CLOSING_KEY {printf(" } ");};
 
-for_loop: FOR ID ASSIGNMENT_OPERATOR expression TO expression INTEGER_CONSTANT algorithms NEXT ID {compareIdentificators($2, $10);}
-  | FOR ID ASSIGNMENT_OPERATOR expression TO expression algorithms NEXT ID {compareIdentificators($2, $9);}
+for_loop: FOR ID ASSIGNMENT_OPERATOR expression TO expression INTEGER_CONSTANT algorithms NEXT ID {
+    compareIdentificators($2, $10);
+    $$ = newNode("FOR", newNode("=", newLeaf($2), newNode("FOR_OPCIONAL", newNode("TO", $4, $6), newLeaf(getSymbolName(&($7),1)))), newNode("CUERPO_FOR", $8, newNode("NEXT", newLeaf($2), NULL)));
+    }
+  | FOR ID ASSIGNMENT_OPERATOR expression TO expression algorithms NEXT ID {
+    compareIdentificators($2, $9);
+    $$ = newNode("FOR", newNode("=", newLeaf($2), newNode("TO", $4, $6)), newNode("CUERPO_FOR", $7, newNode("NEXT", newLeaf($2), NULL)));
+    }
   ;
 
-display: DISPLAY ID {validateIdIsDeclared($2);}
-  | DISPLAY INTEGER_CONSTANT {printf(" %d", $2);}
-  | DISPLAY FLOAT_CONSTANT {printf(" %f", $2);}
-  | DISPLAY STRING_CONSTANT {printf(" %s", $2);}
+display: DISPLAY ID {validateIdIsDeclared($2); $$ = newNode("DISPLAY", newLeaf($2), NULL);}
+  | DISPLAY INTEGER_CONSTANT {printf(" %d", $2); $$ = newNode("DISPLAY",newLeaf(getSymbolName(&($2),1)), NULL);}
+  | DISPLAY FLOAT_CONSTANT {printf(" %f", $2); $$ = newNode("DISPLAY",newLeaf(getSymbolName(&($2),2)), NULL);}
+  | DISPLAY STRING_CONSTANT {printf(" %s", $2); $$ = newNode("DISPLAY",newLeaf(getSymbolName(&($2),3)), NULL);}
   ;
 
-get: GET ID;
+get: GET ID {$$ = newNode("GET", newLeaf($2), NULL);};
 
-condition: comparation {printf(" comparation ");}
-  | comparation logic_operator comparation
-  | NOT_LOGIC_OPERATOR comparation
+condition: comparation {$$ = $1;printf(" comparation ");}
+  | comparation logic_operator comparation {$$ = newNode($2, $1, $3);}
+  | NOT_LOGIC_OPERATOR comparation {$$ = newNode("!", $2, NULL);}
   ;
 
-comparation: expression {printf(" expression1 ");} logic_operator {printf(" logic operator ");} expression {printf(" expression2 ");}
+comparation: expression  logic_operator  expression {$$ = newNode($2, $1, $3);printf(" expression2 ");}
   ;
 
-logic_operator: EQUALS_LOGIC_OPERATOR {$$ = newLeaf("=");}
-  | NOT_EQUALS_LOGIC_OPERATOR {$$ = newLeaf("!=");}
-  | GREATER_LOGIC_OPERATOR {$$ = newLeaf(">");}
-  | GREATER_OR_EQUAL_LOGIC_OPERATOR {$$ = newLeaf(">=");}
-  | LOWER_LOGIC_OPERATOR {$$ = newLeaf("<");}
-  | LOWER_OR_EQUAL_LOGIC_OPERATOR {$$ = newLeaf("<=");}
+logic_operator: EQUALS_LOGIC_OPERATOR {$$ = "=";}
+  | NOT_EQUALS_LOGIC_OPERATOR {$$ = "!=";}
+  | GREATER_LOGIC_OPERATOR {$$ = ">";}
+  | GREATER_OR_EQUAL_LOGIC_OPERATOR {">=";}
+  | LOWER_LOGIC_OPERATOR {$$ = "<";}
+  | LOWER_OR_EQUAL_LOGIC_OPERATOR {$$ = "<=";}
   ;
 
 expression: expression SUM_OPERATOR term {$$ = newNode("+", $1, $3);}
