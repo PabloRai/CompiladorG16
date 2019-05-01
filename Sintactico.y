@@ -12,6 +12,7 @@ extern FILE* yyin;
 void yyerror(const char* s);
 void saveIdentifierDeclarationType();
 char currentIdentifierDeclarationType[7];
+void validateIdIsDeclared();
 %}
 
 
@@ -96,7 +97,7 @@ algorithm: decision {printf(" DECISION ");}
 
 decision: IF {printf(" IF ");} OPENING_PARENTHESIS {printf(" ( ");} condition CLOSING_PARENTHESIS {printf(" ) ");} OPENING_KEY {printf(" { ");} algorithms {printf(" ALGORITHM ");} CLOSING_KEY {printf(" } ");};
 
-assignment: ID ASSIGNMENT_OPERATOR {printf(" := ");} expression;
+assignment: ID ASSIGNMENT_OPERATOR {printf(" := ");} expression {validateIdIsDeclared($1);};
 
 while_loop: WHILE {printf(" WHILE ");} OPENING_PARENTHESIS {printf(" ( ");} condition CLOSING_PARENTHESIS {printf(" ) ");} OPENING_KEY {printf(" { ");} algorithms {printf(" ALGORITHM ");} CLOSING_KEY {printf(" } ");};
 
@@ -181,10 +182,18 @@ int main(int argc, char *argv[]) {
 	return 0;
 }
 void yyerror(const char* s) {
-	fprintf(stderr, "Parse error: %s\n", s);
+	fprintf(stderr, "Parse error: %s on line %d\n", s, yylineno);
 	exit(1);
 }
 
 void saveIdentifierDeclarationType(char* identiferName) {
   strcpy(currentIdentifierDeclarationType, identiferName);
+}
+
+void validateIdIsDeclared(char* id) {
+  symbolNode* symbol = findSymbol(id);
+  if (symbol == NULL || symbol->type == NULL) {
+    fprintf(stderr, "\nVariable: %s is not declared on the declaration block on line %d\n", id, yylineno);
+    exit(1);
+  }
 }
