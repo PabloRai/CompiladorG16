@@ -96,19 +96,19 @@ algorithm: decision {printf(" DECISION ");}
 
 decision: IF {printf(" IF ");} OPENING_PARENTHESIS {printf(" ( ");} condition CLOSING_PARENTHESIS {printf(" ) ");} OPENING_KEY {printf(" { ");} algorithms {printf(" ALGORITHM ");} CLOSING_KEY {printf(" } ");};
 
-assignment: identifier ASSIGNMENT_OPERATOR {printf(" := ");} expression;
+assignment: ID ASSIGNMENT_OPERATOR {printf(" := ");} expression;
 
 while_loop: WHILE {printf(" WHILE ");} OPENING_PARENTHESIS {printf(" ( ");} condition CLOSING_PARENTHESIS {printf(" ) ");} OPENING_KEY {printf(" { ");} algorithms {printf(" ALGORITHM ");} CLOSING_KEY {printf(" } ");};
 
-for_loop: FOR identifier ASSIGNMENT_OPERATOR expression TO expression integer_constant algorithms NEXT identifier
-  | FOR identifier ASSIGNMENT_OPERATOR expression TO expression algorithms NEXT identifier
+for_loop: FOR ID ASSIGNMENT_OPERATOR expression TO expression INTEGER_CONSTANT {printf("  %d ", $7);} algorithms NEXT ID
+  | FOR ID ASSIGNMENT_OPERATOR expression TO expression algorithms NEXT ID
   ;
 
-display: DISPLAY identifier
+display: DISPLAY ID
   | DISPLAY constant
   ;
 
-get: GET identifier;
+get: GET ID;
 
 condition: comparation {printf(" comparation ");}
   | comparation logic_operator comparation
@@ -136,7 +136,7 @@ term: term MULTIPLIER_OPERATOR factor
   | factor
   ;
 
-factor: identifier
+factor: ID
   | constant
   | OPENING_PARENTHESIS expression CLOSING_PARENTHESIS
   ;
@@ -161,13 +161,9 @@ variable_type:
   | STRING_TYPE {printf(" %s", $1); saveIdentifierDeclarationType($1);}
   ;
 variable_list:
-   variable_list SEMICOLON {printf(";");} identifier 
-  | identifier
+   variable_list SEMICOLON ID {printf(";  %s ", $3); insertIdentifier($3);} 
+  | ID {printf("  %s ", $1); insertIdentifier($1);}
   ;
-
-identifier: ID {printf("  %s ", $1); insertIdentifier($1);};
-
-integer_constant: INTEGER_CONSTANT {printf("  %d ", $1);};
 
 
 %%
