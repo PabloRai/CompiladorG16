@@ -106,7 +106,7 @@ for_loop: FOR ID ASSIGNMENT_OPERATOR expression TO expression INTEGER_CONSTANT a
   | FOR ID ASSIGNMENT_OPERATOR expression TO expression algorithms NEXT ID {compareIdentificators($2, $9);}
   ;
 
-display: DISPLAY ID
+display: DISPLAY ID {validateIdIsDeclared($2);}
   | DISPLAY INTEGER_CONSTANT {printf(" %d", $2);}
   | DISPLAY FLOAT_CONSTANT {printf(" %f", $2);}
   | DISPLAY STRING_CONSTANT {printf(" %s", $2);}
