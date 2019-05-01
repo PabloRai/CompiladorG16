@@ -24,6 +24,8 @@ next "NEXT"
 to "TO"
 display "DISPLAY"
 get "GET"
+and "AND"
+or "OR"
 comment "*/"(.*|\n|\r)"/*"
 float_constant ([0-9]+"."[0-9]+)|([0-9]*"."[0-9]+)|([0-9]+"."[0-9]*)
 string_constant  \".*\"
@@ -66,6 +68,8 @@ colon ":"
 {to} {return TO;}
 {display} {return DISPLAY;}
 {get} {return GET;}
+{and} {return AND;}
+{or} {return OR;}
 {closing_parenthesis} {return CLOSING_PARENTHESIS;}
 {opening_parenthesis} {return OPENING_PARENTHESIS;}
 {closing_key} {return CLOSING_KEY;}
@@ -95,7 +99,7 @@ colon ":"
 "\r\n"
 "\t"
 {comment}
-. {printf("WTF IS THIS MAN %s\n", yytext);}
+. {printf("Unrecognized token %s\n", yytext);}
 <<EOF>> {yyterminate();}
 
 %%

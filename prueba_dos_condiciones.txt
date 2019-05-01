@@ -1,0 +1,7 @@
+DEFVAR
+   INT : b1;b2;b3;b4
+ENDDEF
+
+IF (b3 >= b4 AND b1 <= 2) {
+        b4 := 93
+}

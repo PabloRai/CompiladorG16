@@ -60,6 +60,8 @@ ast* tree;
 %left GREATER_OR_EQUAL_LOGIC_OPERATOR
 %left LOWER_LOGIC_OPERATOR
 %left LOWER_OR_EQUAL_LOGIC_OPERATOR
+%left OR
+%left AND
 %start program
 
 
@@ -86,6 +88,7 @@ ast* tree;
 %type <ast> sentence
 %type <ast> program
 %type <auxLogicOperator> logic_operator
+%type <auxLogicOperator> logic_concatenator
 
 %union {
   int integer_value;
@@ -142,7 +145,7 @@ display: DISPLAY ID {validateIdIsDeclared($2); $$ = newNode("DISPLAY", newLeaf($
 get: GET ID {$$ = newNode("GET", newLeaf($2), NULL);};
 
 condition: comparation {$$ = $1;printf(" comparation ");}
-  | comparation logic_operator comparation {$$ = newNode($2, $1, $3);}
+  | comparation logic_concatenator comparation {$$ = newNode($2, $1, $3);}
   | NOT_LOGIC_OPERATOR comparation {$$ = newNode("!", $2, NULL);}
   ;
 
@@ -155,6 +158,10 @@ logic_operator: EQUALS_LOGIC_OPERATOR {$$ = "=";}
   | GREATER_OR_EQUAL_LOGIC_OPERATOR {$$ = ">=";}
   | LOWER_LOGIC_OPERATOR {$$ = "<";}
   | LOWER_OR_EQUAL_LOGIC_OPERATOR {$$ = "<=";}
+  ;
+
+logic_concatenator: OR {$$ = "OR";}
+  | AND {$$ = "AND";}
   ;
 
 expression: expression SUM_OPERATOR term {$$ = newNode("+", $1, $3);}
