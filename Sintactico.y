@@ -209,8 +209,7 @@ int main(int argc, char *argv[]) {
   printTable();
   saveTable();
   printf("\n --- INTERMEDIA --- \n");
-  printAST(tree);
-  saveAST(tree);
+  printAndSaveAST(tree);
 	return 0;
 }
 void yyerror(const char* s) {
