@@ -24,10 +24,10 @@ ast* newNode(char* operation, ast* leftNode, ast* rightNode) {
 }
 
 
-ast* newLeaf(char* symbol) {
+ast* newLeaf(char* value) {
     ast* node = (ast*) malloc(sizeof(ast));
     
-    node->value = symbol;
+    node->value = value;
     node->left = NULL;
     node->right = NULL;
     return node;

@@ -68,7 +68,7 @@ void compareIdentificators();
 %type <string_value> INT_TYPE
 %type <string_value> STRING_TYPE
 %type <string_value> FLOAT_TYPE
-%type <ast> expression term factor assignment
+%type <ast> expression term factor assignment logic_operator
 
 %union {
   int integer_value;
@@ -125,12 +125,12 @@ condition: comparation {printf(" comparation ");}
 comparation: expression {printf(" expression1 ");} logic_operator {printf(" logic operator ");} expression {printf(" expression2 ");}
   ;
 
-logic_operator: EQUALS_LOGIC_OPERATOR
-  | NOT_EQUALS_LOGIC_OPERATOR
-  | GREATER_LOGIC_OPERATOR
-  | GREATER_OR_EQUAL_LOGIC_OPERATOR
-  | LOWER_LOGIC_OPERATOR
-  | LOWER_OR_EQUAL_LOGIC_OPERATOR
+logic_operator: EQUALS_LOGIC_OPERATOR {$$ = newLeaf("=");}
+  | NOT_EQUALS_LOGIC_OPERATOR {$$ = newLeaf("!=");}
+  | GREATER_LOGIC_OPERATOR {$$ = newLeaf(">");}
+  | GREATER_OR_EQUAL_LOGIC_OPERATOR {$$ = newLeaf(">=");}
+  | LOWER_LOGIC_OPERATOR {$$ = newLeaf("<");}
+  | LOWER_OR_EQUAL_LOGIC_OPERATOR {$$ = newLeaf("<=");}
   ;
 
 expression: expression SUM_OPERATOR term {$$ = newNode("+", $1, $3);}
