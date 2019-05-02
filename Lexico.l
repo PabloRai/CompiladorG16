@@ -26,6 +26,10 @@ display "DISPLAY"
 get "GET"
 and "AND"
 or "OR"
+do "DO"
+in "IN"
+endwhile "ENDWHILE"
+comma ","
 comment "*/"(.*|\n|\r)"/*"
 float_constant ([0-9]+"."[0-9]+)|([0-9]*"."[0-9]+)|([0-9]+"."[0-9]*)
 string_constant  \".*\"
@@ -70,6 +74,10 @@ colon ":"
 {get} {return GET;}
 {and} {return AND;}
 {or} {return OR;}
+{in} {return IN;}
+{do} {return DO;}
+{endwhile} {return ENDWHILE;}
+{comma} {return COMMA;}
 {closing_parenthesis} {return CLOSING_PARENTHESIS;}
 {opening_parenthesis} {return OPENING_PARENTHESIS;}
 {closing_key} {return CLOSING_KEY;}
@@ -99,7 +107,7 @@ colon ":"
 "\r\n"
 "\t"
 {comment}
-. {printf("Unrecognized token %s\n", yytext);}
+. {printf("Unrecognized token %s\n", yytext); exit(1);}
 <<EOF>> {yyterminate();}
 
 %%

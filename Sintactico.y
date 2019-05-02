@@ -62,6 +62,10 @@ ast* tree;
 %left LOWER_OR_EQUAL_LOGIC_OPERATOR
 %left OR
 %left AND
+%token ENDWHILE
+%token DO
+%token IN
+%token COMMA
 %start program
 
 
@@ -87,6 +91,8 @@ ast* tree;
 %type <ast> decision
 %type <ast> sentence
 %type <ast> program
+%type <ast> while_special
+%type <ast> expression_list
 %type <auxLogicOperator> logic_operator
 %type <auxLogicOperator> logic_concatenator
 
@@ -118,6 +124,7 @@ algorithm: decision {printf(" DECISION "); $$ = $1;}
   | for_loop {printf(" FOR LOOP "); $$ = $1;}
   | display {printf(" DISPLAY "); $$ = $1;}
   | get {printf(" GET "); $$ = $1;}
+  | while_special {printf(" SPECIAL WHILE "); $$ = $1;}
   ;
 
 decision: IF OPENING_PARENTHESIS condition CLOSING_PARENTHESIS OPENING_KEY algorithms CLOSING_KEY {$$ = newNode("IF", $3, $6);};
@@ -125,6 +132,13 @@ decision: IF OPENING_PARENTHESIS condition CLOSING_PARENTHESIS OPENING_KEY algor
 assignment: ID ASSIGNMENT_OPERATOR expression {printf(" := "); validateIdIsDeclared($1); $$ = newNode("=", newLeaf($1), $3);};
 
 while_loop: WHILE OPENING_PARENTHESIS condition CLOSING_PARENTHESIS OPENING_KEY algorithms CLOSING_KEY {$$ = newNode("WHILE", $3, $6);};
+
+while_special: WHILE ID IN OPENING_SQUARE_BRACKET expression_list CLOSING_SQUARE_BRACKET DO algorithms ENDWHILE {validateIdIsDeclared($2); $$ = newNode("WHILE_SPECIAL", newNode("IN", newLeaf($2), $5), $8);}
+  ;
+
+expression_list: expression_list COMMA expression {$$ = newNode(";", $1, $3);}
+  | expression {$$ = $1;}
+  ;
 
 for_loop: FOR ID ASSIGNMENT_OPERATOR expression TO expression INTEGER_CONSTANT algorithms NEXT ID {
     compareIdentificators($2, $10);

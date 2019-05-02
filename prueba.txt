@@ -66,3 +66,11 @@ IF (a1 > b2) {
     }
   }
 }
+
+WHILE b1 IN [2,3,b1, b2+b1] 
+DO
+    WHILE b1 IN [8*2,3-2,b1, b2+b1] 
+    DO
+        b1 := 8
+    ENDWHILE
+ENDWHILE
