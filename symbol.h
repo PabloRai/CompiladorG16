@@ -81,7 +81,6 @@ symbolNode* insert(char* value) {
         strcpy(node->name, "");
         node->name[0] = '_' ;
         concatenate(node->name, valueToInsert);
-        printf("\n NAME: %s \n", node->name);
     } else {
         strcpy(node->name, valueToInsert);
     }

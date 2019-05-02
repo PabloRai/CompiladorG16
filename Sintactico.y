@@ -107,113 +107,112 @@ ast* tree;
 %%
 
 
-program: sentence {printf("\nSUCCESSFUL COMPILATION\n"); $$ = $1; tree = $$;}
+program: sentence {printf("\n Regla 0: SUCCESSFUL COMPILATION\n"); $$ = $1; tree = $$;}
   ;
 
-sentence: variable_declaration_block algorithms {printf(" SENTENCE ALGORITHM "); $$ = $2;}
-  | variable_declaration_block {printf(" VARIABLE DECLARATION ");}
+sentence: variable_declaration_block algorithms {printf("\n Regla 1: sentence: variable_declaration_block algorithms \n"); $$ = $2;}
+  | variable_declaration_block {printf("\n Regla 2: sentence: variable_declaration_block \n");}
   ;
 
-algorithms: algorithm {$$ = $1;}
-  | algorithms algorithm {$$ = newNode("CUERPO_ALGORITMH", $1, $2);}
+algorithms: algorithm {$$ = $1; printf("\n Regla 3: algorithms: algorithm \n");}
+  | algorithms algorithm {$$ = newNode("CUERPO_ALGORITMH", $1, $2); printf("\n Regla 4: algorithms: algorithms algorithm \n");}
   ;
 
-algorithm: decision {printf(" DECISION "); $$ = $1;}
-  | assignment {printf(" ASSIGNMENT "); $$ = $1;}
-  | while_loop {printf(" WHILE LOOP "); $$ = $1;}
-  | for_loop {printf(" FOR LOOP "); $$ = $1;}
-  | display {printf(" DISPLAY "); $$ = $1;}
-  | get {printf(" GET "); $$ = $1;}
-  | while_special {printf(" SPECIAL WHILE "); $$ = $1;}
+algorithm: decision {printf("\n Regla 5: algorithm: decision \n"); $$ = $1;}
+  | assignment {printf("\n Regla 6: algorithm: assignment \n"); $$ = $1;}
+  | while_loop {printf("\n Regla 7: algorithm: while_loop \n"); $$ = $1;}
+  | for_loop {printf("\n Regla 8: algorithm: for_loop \n"); $$ = $1;}
+  | display {printf("\n Regla 9: algorithm: display \n"); $$ = $1;}
+  | get {printf("\n Regla 10: algorithm: get \n"); $$ = $1;}
+  | while_special {printf("\n Regla 11: algorithm: while_special \n"); $$ = $1;}
   ;
 
-decision: IF OPENING_PARENTHESIS condition CLOSING_PARENTHESIS OPENING_KEY algorithms CLOSING_KEY {$$ = newNode("IF", $3, $6);};
+decision: IF OPENING_PARENTHESIS condition CLOSING_PARENTHESIS OPENING_KEY algorithms CLOSING_KEY {$$ = newNode("IF", $3, $6); printf("\n Regla 12: decision: IF OPENING_PARENTHESIS condition CLOSING_PARENTHESIS OPENING_KEY algorithms CLOSING_KEY \n");};
 
-assignment: ID ASSIGNMENT_OPERATOR expression {printf(" := "); validateIdIsDeclared($1); $$ = newNode("=", newLeaf($1), $3);};
+assignment: ID ASSIGNMENT_OPERATOR expression {validateIdIsDeclared($1); $$ = newNode("=", newLeaf($1), $3); printf("\n Regla 13: assignment: ID ASSIGNMENT_OPERATOR expression \n");};
 
-while_loop: WHILE OPENING_PARENTHESIS condition CLOSING_PARENTHESIS OPENING_KEY algorithms CLOSING_KEY {$$ = newNode("WHILE", $3, $6);};
+while_loop: WHILE OPENING_PARENTHESIS condition CLOSING_PARENTHESIS OPENING_KEY algorithms CLOSING_KEY {$$ = newNode("WHILE", $3, $6); printf("\n Regla 14: while_loop: WHILE OPENING_PARENTHESIS condition CLOSING_PARENTHESIS OPENING_KEY algorithms CLOSING_KEY \n");};
 
-while_special: WHILE ID IN OPENING_SQUARE_BRACKET expression_list CLOSING_SQUARE_BRACKET DO algorithms ENDWHILE {validateIdIsDeclared($2); $$ = newNode("WHILE_SPECIAL", newNode("IN", newLeaf($2), $5), $8);}
+while_special: WHILE ID IN OPENING_SQUARE_BRACKET expression_list CLOSING_SQUARE_BRACKET DO algorithms ENDWHILE {validateIdIsDeclared($2); $$ = newNode("WHILE_SPECIAL", newNode("IN", newLeaf($2), $5), $8); printf("\n Regla 15: while_special: WHILE ID IN OPENING_SQUARE_BRACKET expression_list CLOSING_SQUARE_BRACKET DO algorithms ENDWHILE \n");}
   ;
 
-expression_list: expression_list COMMA expression {$$ = newNode(";", $1, $3);}
-  | expression {$$ = $1;}
+expression_list: expression_list COMMA expression {$$ = newNode(";", $1, $3); printf("\n Regla 16: expression_list: expression_list COMMA expression \n");}
+  | expression {$$ = $1; printf("\n Regla 17: expression_list: expression \n");}
   ;
 
 for_loop: FOR ID ASSIGNMENT_OPERATOR expression TO expression INTEGER_CONSTANT algorithms NEXT ID {
     compareIdentificators($2, $10);
     $$ = newNode("FOR", newNode("=", newLeaf($2), newNode("FOR_OPCIONAL", newNode("TO", $4, $6), newLeaf(getSymbolName(&($7),1)))), newNode("CUERPO_FOR", $8, newNode("NEXT", newLeaf($2), NULL)));
+    printf("\n Regla 18: for_loop: FOR ID ASSIGNMENT_OPERATOR expression TO expression INTEGER_CONSTANT algorithms NEXT ID \n");
     }
   | FOR ID ASSIGNMENT_OPERATOR expression TO expression algorithms NEXT ID {
     compareIdentificators($2, $9);
     $$ = newNode("FOR", newNode("=", newLeaf($2), newNode("TO", $4, $6)), newNode("CUERPO_FOR", $7, newNode("NEXT", newLeaf($2), NULL)));
+    printf("\n Regla 19: for_loop: FOR ID ASSIGNMENT_OPERATOR expression TO expression algorithms NEXT ID \n");
     }
   ;
 
-display: DISPLAY ID {validateIdIsDeclared($2); $$ = newNode("DISPLAY", newLeaf($2), NULL);}
-  | DISPLAY INTEGER_CONSTANT {printf(" %d", $2); $$ = newNode("DISPLAY",newLeaf(getSymbolName(&($2),1)), NULL);}
-  | DISPLAY FLOAT_CONSTANT {printf(" %f", $2); $$ = newNode("DISPLAY",newLeaf(getSymbolName(&($2),2)), NULL);}
-  | DISPLAY STRING_CONSTANT {printf(" %s", $2); $$ = newNode("DISPLAY",newLeaf(getSymbolName(&($2),3)), NULL);}
+display: DISPLAY ID {validateIdIsDeclared($2); $$ = newNode("DISPLAY", newLeaf($2), NULL); printf("\n Regla 20: display: DISPLAY ID \n");}
+  | DISPLAY INTEGER_CONSTANT {$$ = newNode("DISPLAY",newLeaf(getSymbolName(&($2),1)), NULL); printf("\n Regla 21: display: DISPLAY INTEGER_CONSTANT \n");}
+  | DISPLAY FLOAT_CONSTANT {$$ = newNode("DISPLAY",newLeaf(getSymbolName(&($2),2)), NULL); printf("\n Regla 22: display: DISPLAY FLOAT_CONSTANT \n");}
+  | DISPLAY STRING_CONSTANT {$$ = newNode("DISPLAY",newLeaf(getSymbolName(&($2),3)), NULL); printf("\n Regla 23: display: DISPLAY STRING_CONSTANT \n");}
   ;
 
-get: GET ID {$$ = newNode("GET", newLeaf($2), NULL);};
+get: GET ID {$$ = newNode("GET", newLeaf($2), NULL); printf("\n Regla 24: get: GET ID \n");};
 
-condition: comparation {$$ = $1;printf(" comparation ");}
-  | comparation logic_concatenator comparation {$$ = newNode($2, $1, $3);}
-  | NOT_LOGIC_OPERATOR comparation {$$ = newNode("!", $2, NULL);}
+condition: comparation {$$ = $1; printf("\n Regla 25: condition: comparation \n");}
+  | comparation logic_concatenator comparation {$$ = newNode($2, $1, $3); printf("\n Regla 26: condition: comparation logic_concatenator comparation \n");}
+  | NOT_LOGIC_OPERATOR comparation {$$ = newNode("!", $2, NULL); printf("\n Regla 27: condition: NOT_LOGIC_OPERATOR comparation \n");}
   ;
 
-comparation: expression  logic_operator  expression {$$ = newNode($2, $1, $3);printf(" expression2 ");}
+comparation: expression  logic_operator  expression {$$ = newNode($2, $1, $3); printf("\n Regla 28: comparation: expression  logic_operator  expression \n");}
   ;
 
-logic_operator: EQUALS_LOGIC_OPERATOR {$$ = "=";}
-  | NOT_EQUALS_LOGIC_OPERATOR {$$ = "!=";}
-  | GREATER_LOGIC_OPERATOR {$$ = ">";}
-  | GREATER_OR_EQUAL_LOGIC_OPERATOR {$$ = ">=";}
-  | LOWER_LOGIC_OPERATOR {$$ = "<";}
-  | LOWER_OR_EQUAL_LOGIC_OPERATOR {$$ = "<=";}
+logic_operator: EQUALS_LOGIC_OPERATOR {$$ = "="; printf("\n Regla 29: logic_operator: EQUALS_LOGIC_OPERATOR \n");}
+  | NOT_EQUALS_LOGIC_OPERATOR {$$ = "!="; printf("\n Regla 30: logic_operator: NOT_EQUALS_LOGIC_OPERATOR \n");}
+  | GREATER_LOGIC_OPERATOR {$$ = ">"; printf("\n Regla 31: logic_operator: GREATER_LOGIC_OPERATOR \n");}
+  | GREATER_OR_EQUAL_LOGIC_OPERATOR {$$ = ">="; printf("\n Regla 32: logic_operator: GREATER_OR_EQUAL_LOGIC_OPERATOR \n");}
+  | LOWER_LOGIC_OPERATOR {$$ = "<"; printf("\n Regla 33: logic_operator: LOWER_LOGIC_OPERATOR \n");}
+  | LOWER_OR_EQUAL_LOGIC_OPERATOR {$$ = "<="; printf("\n Regla 34: logic_operator: LOWER_OR_EQUAL_LOGIC_OPERATOR \n");}
   ;
 
-logic_concatenator: OR {$$ = "OR";}
-  | AND {$$ = "AND";}
+logic_concatenator: OR {$$ = "OR"; printf("\n Regla 35: logic_concatenator: OR \n");}
+  | AND {$$ = "AND"; printf("\n Regla 36: logic_concatenator: AND \n");}
   ;
 
-expression: expression SUM_OPERATOR term {$$ = newNode("+", $1, $3);}
-  | expression MINUS_OPERATOR term {$$ = newNode("-", $1, $3);}
-  | term {$$ = $1;}
+expression: expression SUM_OPERATOR term {$$ = newNode("+", $1, $3); printf("\n Regla 37: expression: expression SUM_OPERATOR term\n");}
+  | expression MINUS_OPERATOR term {$$ = newNode("-", $1, $3); printf("\n Regla 38: expression: expression MINUS_OPERATOR term\n");}
+  | term {$$ = $1; printf("\n Regla 39: expression: term\n");}
   ;
 
-term: term MULTIPLIER_OPERATOR factor {$$ = newNode("*", $1, $3);}
-  | term DIVIDE_OPERATOR factor {$$ = newNode("/", $1, $3);}
-  | factor {$$ = $1;}
+term: term MULTIPLIER_OPERATOR factor {$$ = newNode("*", $1, $3); printf("\n Regla 40: term: term MULTIPLIER_OPERATOR factor\n");}
+  | term DIVIDE_OPERATOR factor {$$ = newNode("/", $1, $3); printf("\n Regla 41: term: term DIVIDE_OPERATOR factor\n");}
+  | factor {$$ = $1; printf("\n Regla 42: term: factor\n");}
   ;
 
-factor: ID {$$ = newLeaf($1);}
-  | INTEGER_CONSTANT {$$ = newLeaf(getSymbolName(&($1),1)); printf(" %d", $1);}
-  | FLOAT_CONSTANT {$$ = newLeaf(getSymbolName(&($1),2)); printf(" %f", $1);}
-  | STRING_CONSTANT {$$ = newLeaf(getSymbolName($1,3)); printf(" %s", $1);}
-  | OPENING_PARENTHESIS expression CLOSING_PARENTHESIS {$$ = $2;}
+factor: ID {$$ = newLeaf($1); printf("\n Regla 43: factor: ID \n");}
+  | INTEGER_CONSTANT {$$ = newLeaf(getSymbolName(&($1),1)); printf("\n Regla 44: factor: INTEGER_CONSTANT \n");}
+  | FLOAT_CONSTANT {$$ = newLeaf(getSymbolName(&($1),2)); printf("\n Regla 45: factor: FLOAT_CONSTANT \n");}
+  | STRING_CONSTANT {$$ = newLeaf(getSymbolName($1,3)); printf("\n Regla 46: factor: STRING_CONSTANT \n");}
+  | OPENING_PARENTHESIS expression CLOSING_PARENTHESIS {$$ = $2; printf("\n Regla 47: factor: OPENING_PARENTHESIS expression CLOSING_PARENTHESIS \n");}
   ;
 
 
 
-variable_declaration_block: DEFVAR {printf("DEFVAR\n");} variable_declarations ENDDEF {printf("\nENDDEF\n");}
+variable_declaration_block: DEFVAR variable_declarations ENDDEF {printf("\n Regla 48: variable_declaration_block: DEFVAR variable_declarations ENDDEF \n");}
   ;
 
-variable_declarations:
-   variable_declarations variable_declaration
-  | variable_declaration
+variable_declarations: variable_declarations variable_declaration {printf("\n Regla 49: variable_declarations: variable_declarations variable_declaration \n");}
+  | variable_declaration {printf("\n Regla 50: variable_declarations: variable_declaration \n");}
 
-variable_declaration: variable_type COLON {printf(":");} variable_list {putTypeIdentifierOnSymbolTable(currentIdentifierDeclarationType);}
+variable_declaration: variable_type COLON variable_list {putTypeIdentifierOnSymbolTable(currentIdentifierDeclarationType); printf("\n Regla 51: variable_declaration: variable_type COLON variable_list\n");}
   ;
-variable_type:
-   INT_TYPE {printf(" %s", $1); saveIdentifierDeclarationType($1);}
-  | FLOAT_TYPE {printf(" %s", $1); saveIdentifierDeclarationType($1);}
-  | STRING_TYPE {printf(" %s", $1); saveIdentifierDeclarationType($1);}
+variable_type: INT_TYPE {saveIdentifierDeclarationType($1); printf("\n Regla 52: variable_type: INT_TYPE \n");}
+  | FLOAT_TYPE {saveIdentifierDeclarationType($1); printf("\n Regla 53: variable_type: FLOAT_TYPE \n");}
+  | STRING_TYPE {saveIdentifierDeclarationType($1); printf("\n Regla 54: variable_type: STRING_TYPE \n");}
   ;
-variable_list:
-   variable_list SEMICOLON ID {printf(";  %s ", $3); insertIdentifier($3);} 
-  | ID {printf("  %s ", $1); insertIdentifier($1);}
+variable_list: variable_list SEMICOLON ID {insertIdentifier($3); printf("\n Regla 55: variable_list: variable_list SEMICOLON ID \n");} 
+  | ID {insertIdentifier($1); printf("\n Regla 56: variable_list: ID \n");}
   ;
 
 
