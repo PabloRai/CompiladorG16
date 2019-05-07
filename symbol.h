@@ -61,12 +61,15 @@ symbolNode* insert(char* value) {
         removeChar(valueToInsert, '"');
         node->length = strlen(valueToInsert);
         isConstant = 1;
+        node->type = "STRING_C";
         // Is it a float constant?
     } else if (strchr(valueToInsert, '.') != NULL) {
         isConstant = 1;
+        node->type = "FLOAT_C";
         // Is it a integer constant?
     } else if (isdigit(valueToInsert[0]) != 0) {
         isConstant = 1;
+        node->type = "INTEGER_C";
         if (valueToInsert[0] == '0') {
             if(valueToInsert[1] == 'b') {
                 shouldApplyBase2Transformation = 1;
@@ -120,9 +123,9 @@ symbolNode* findSymbol(char* value) {
 void printTable() {
     symbolNode* current = symbolTable;
     printf("\n TABLA DE SIMBOLOS \n");
-    printf("\nNOMBRE\tTIPODATO\tVALOR\tLONGITUD\n");
+    printf("\nNOMBRE\tTIPODATO\t\tVALOR\tLONGITUD\n");
     while(current != NULL){
-        printf("%s\t%s\t\t%s\t%d\n", current->name, current->type, current->value, current->length);
+        printf("%s\t%-10s\t\t%s\t%d\n", current->name, current->type, current->value, current->length);
         current = current->next;
     }
     
