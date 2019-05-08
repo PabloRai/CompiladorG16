@@ -5,8 +5,8 @@
 
 typedef struct listSymbol {
     char name[220];
-    char* type;
-    char* value;
+    char type[220];
+    char value[220];
     int length;
     struct listSymbol* next;
 } symbolNode;
@@ -61,15 +61,20 @@ symbolNode* insert(char* value) {
         removeChar(valueToInsert, '"');
         node->length = strlen(valueToInsert);
         isConstant = 1;
-        node->type = "STRING_C";
+        strcpy(node->type, "STRING_C");
+        //node->type = "STRING_C";
         // Is it a float constant?
     } else if (strchr(valueToInsert, '.') != NULL) {
         isConstant = 1;
-        node->type = "FLOAT_C";
+        strcpy(node->type, "FLOAT_C");
+
+        //node->type = "FLOAT_C";
         // Is it a integer constant?
     } else if (isdigit(valueToInsert[0]) != 0) {
         isConstant = 1;
-        node->type = "INTEGER_C";
+        strcpy(node->type, "INTEGER_C");
+
+        //node->type = "INTEGER_C";
         if (valueToInsert[0] == '0') {
             if(valueToInsert[1] == 'b') {
                 shouldApplyBase2Transformation = 1;
@@ -99,7 +104,8 @@ symbolNode* insert(char* value) {
         itoa(transformedValue, valueToInsert, 10);
     }
     if (isConstant == 1) {
-        node->value = valueToInsert;
+        //node->value = valueToInsert;
+        strcpy(node->value, valueToInsert);
     }
 
     node->next = symbolTable;
@@ -123,9 +129,9 @@ symbolNode* findSymbol(char* value) {
 void printTable() {
     symbolNode* current = symbolTable;
     printf("\n TABLA DE SIMBOLOS \n");
-    printf("\nNOMBRE\tTIPODATO\t\tVALOR\tLONGITUD\n");
+    printf("\nNOMBRE\tTIPODATO\tVALOR\tLONGITUD\n");
     while(current != NULL){
-        printf("%s\t%-10s\t\t%s\t%d\n", current->name, current->type, current->value, current->length);
+        printf("%s\t%s\t%s\t%d\n", current->name, current->type, current->value, current->length);
         current = current->next;
     }
     
@@ -202,7 +208,7 @@ void putTypeIdentifierOnSymbolTable(char* type) {
         symbolNode* symbol = findSymbol(identifierNode->value);
         // Symbol should never be NULL but just in case..
         if (symbol != NULL) {
-            if (symbol->type != NULL) {
+            if (strlen(symbol->type) != 0) {
                 fprintf(stderr, "\n ERROR: Variable %s has been already declared", symbol->name);
                 exit(1);
             }
@@ -212,7 +218,8 @@ void putTypeIdentifierOnSymbolTable(char* type) {
             strcpy(valueToInsert, type);
         
             
-            symbol->type = valueToInsert;
+            //symbol->type = valueToInsert;
+            strcpy(symbol->type, valueToInsert);
         }
         
         identifierNode = identifierNode->next;
@@ -271,7 +278,7 @@ void saveTable() {
     symbolNode* current = symbolTable;
     fprintf(file, "NOMBRE\tTIPODATO\tVALOR\tLONGITUD\n");
     while(current != NULL){
-        fprintf(file, "%s\t%s\t\t%s\t%d\n", current->name, current->type, current->value, current->length);
+        fprintf(file, "%s\t%s\t%s\t%d\n", current->name, current->type, current->value, current->length);
         current = current->next;
     }
     fclose(file);
