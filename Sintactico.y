@@ -1,8 +1,7 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-#include "symbol.h"
-#include "tree.h"
+#include "assembler.h"
 #include <string.h>
 
 #define YYDEBUG 1
@@ -229,7 +228,9 @@ int main(int argc, char *argv[]) {
   printTable();
   saveTable();
   printf("\n --- INTERMEDIA --- \n");
+  ast treeCopy = *tree;
   printAndSaveAST(tree);
+  generateAssembler();
 	return 0;
 }
 void yyerror(const char* s) {

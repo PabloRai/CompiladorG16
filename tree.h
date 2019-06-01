@@ -54,6 +54,7 @@ void printAST(ast* tree) {
 
 
 void printAndSaveAST(ast* tree) {
+    ast* copy = tree;
     file = fopen("intermedia.txt", "w");
     if (file == NULL)
     {
@@ -61,6 +62,6 @@ void printAndSaveAST(ast* tree) {
         exit(1);
     }
 
-    printAST(tree);
+    printAST(copy);
     fclose(file);
 }
