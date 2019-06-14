@@ -9,16 +9,17 @@ include  number.asm
 MAXTEXTSIZE equ 40
 
 .DATA
-	_20 dd 20.0
-	_5 dd 5.0
-	_4 dd 4.0
+	_11 dd 11.0
+	_10 dd 10.0
+	_44 dd 44.0
 	_3 dd 3.0
-	_2 dd 2.0
-	_1 dd 1.0
 	_9 dd 9.0
-	_8 dd 8.0
-	b3 dd ?
+	_93 dd 93.0
+	_2 dd 2.0
+	b6 dd ?
+	b5 dd ?
 	b4 dd ?
+	b3 dd ?
 	b2 dd ?
 	b1 dd ?
 	_SUM dd ?
@@ -34,53 +35,28 @@ MAXTEXTSIZE equ 40
 	mov ES,AX
 	finit
 
-	; ASIGNACION 
-	FLD _8
-	FSTP b1
+	; => 
+	FLD b3
+	FLD b4
+	FCOM
+	JL LABEL_IF_0
 
-	; ASIGNACION 
-	FLD _9
-	FSTP b2
+	; STACK CLENUP
+	FFREE st(0)
+	FFREE st(1)
+	FFREE st(2)
+	FFREE st(3)
+	FFREE st(4)
+	FFREE st(5)
+	FFREE st(6)
+	FFREE st(7)
 
-	; SUMA 
-	FLD _1
+
+	; => 
+	FLD b1
 	FLD _2
-	FADD
-	FSTP _SUM
-
-	; STACK CLENUP
-	FFREE st(0)
-	FFREE st(1)
-	FFREE st(2)
-	FFREE st(3)
-	FFREE st(4)
-	FFREE st(5)
-	FFREE st(6)
-	FFREE st(7)
-
-
-	; SUMA 
-	FLD _SUM
-	FLD _3
-	FADD
-	FSTP _SUM
-
-	; STACK CLENUP
-	FFREE st(0)
-	FFREE st(1)
-	FFREE st(2)
-	FFREE st(3)
-	FFREE st(4)
-	FFREE st(5)
-	FFREE st(6)
-	FFREE st(7)
-
-
-	; SUMA 
-	FLD _SUM
-	FLD _4
-	FADD
-	FSTP _SUM
+	FCOM
+	JL LABEL_IF_0
 
 	; STACK CLENUP
 	FFREE st(0)
@@ -94,243 +70,43 @@ MAXTEXTSIZE equ 40
 
 
 	; ASIGNACION 
-	FLD _SUM
-	FSTP b2
-
-	; RESTA 
-	FLD _8
-	FLD _3
-	FSUB
-	FSTP _MINUS
-
-	; STACK CLENUP
-	FFREE st(0)
-	FFREE st(1)
-	FFREE st(2)
-	FFREE st(3)
-	FFREE st(4)
-	FFREE st(5)
-	FFREE st(6)
-	FFREE st(7)
-
-
-	; SUMA 
-	FLD _MINUS
-	FLD _2
-	FADD
-	FSTP _SUM
-
-	; STACK CLENUP
-	FFREE st(0)
-	FFREE st(1)
-	FFREE st(2)
-	FFREE st(3)
-	FFREE st(4)
-	FFREE st(5)
-	FFREE st(6)
-	FFREE st(7)
-
-
-	; RESTA 
-	FLD _SUM
-	FLD _1
-	FSUB
-	FSTP _MINUS
-
-	; STACK CLENUP
-	FFREE st(0)
-	FFREE st(1)
-	FFREE st(2)
-	FFREE st(3)
-	FFREE st(4)
-	FFREE st(5)
-	FFREE st(6)
-	FFREE st(7)
-
-
-	; ASIGNACION 
-	FLD _MINUS
-	FSTP b1
-
-	; MULTIPLICA 
-	FLD _8
-	FLD _3
-	FMUL
-	FSTP _MULTIPLY
-
-	; STACK CLENUP
-	FFREE st(0)
-	FFREE st(1)
-	FFREE st(2)
-	FFREE st(3)
-	FFREE st(4)
-	FFREE st(5)
-	FFREE st(6)
-	FFREE st(7)
-
-
-	; SUMA 
-	FLD _MULTIPLY
-	FLD _3
-	FADD
-	FSTP _SUM
-
-	; STACK CLENUP
-	FFREE st(0)
-	FFREE st(1)
-	FFREE st(2)
-	FFREE st(3)
-	FFREE st(4)
-	FFREE st(5)
-	FFREE st(6)
-	FFREE st(7)
-
-
-	; RESTA 
-	FLD _SUM
-	FLD _2
-	FSUB
-	FSTP _MINUS
-
-	; STACK CLENUP
-	FFREE st(0)
-	FFREE st(1)
-	FFREE st(2)
-	FFREE st(3)
-	FFREE st(4)
-	FFREE st(5)
-	FFREE st(6)
-	FFREE st(7)
-
-
-	; MULTIPLICA 
-	FLD _1
-	FLD _5
-	FMUL
-	FSTP _MULTIPLY
-
-	; STACK CLENUP
-	FFREE st(0)
-	FFREE st(1)
-	FFREE st(2)
-	FFREE st(3)
-	FFREE st(4)
-	FFREE st(5)
-	FFREE st(6)
-	FFREE st(7)
-
-
-	; SUMA 
-	FLD _MINUS
-	FLD _MULTIPLY
-	FADD
-	FSTP _SUM
-
-	; STACK CLENUP
-	FFREE st(0)
-	FFREE st(1)
-	FFREE st(2)
-	FFREE st(3)
-	FFREE st(4)
-	FFREE st(5)
-	FFREE st(6)
-	FFREE st(7)
-
-
-	; ASIGNACION 
-	FLD _SUM
+	FLD _93
 	FSTP b4
+LABEL_IF_0:
 
-	; DIVIDE 
-	FLD _8
+	; STACK CLENUP
+	FFREE st(0)
+	FFREE st(1)
+	FFREE st(2)
+	FFREE st(3)
+	FFREE st(4)
+	FFREE st(5)
+	FFREE st(6)
+	FFREE st(7)
+
+
+	; => 
+	FLD b5
+	FLD _9
+	FCOM
+	JL LABEL_IF_1
+
+	; STACK CLENUP
+	FFREE st(0)
+	FFREE st(1)
+	FFREE st(2)
+	FFREE st(3)
+	FFREE st(4)
+	FFREE st(5)
+	FFREE st(6)
+	FFREE st(7)
+
+
+	; => 
+	FLD b6
 	FLD _3
-	FDIV
-	FSTP _DIVIDE
-
-	; STACK CLENUP
-	FFREE st(0)
-	FFREE st(1)
-	FFREE st(2)
-	FFREE st(3)
-	FFREE st(4)
-	FFREE st(5)
-	FFREE st(6)
-	FFREE st(7)
-
-
-	; MULTIPLICA 
-	FLD _DIVIDE
-	FLD _2
-	FMUL
-	FSTP _MULTIPLY
-
-	; STACK CLENUP
-	FFREE st(0)
-	FFREE st(1)
-	FFREE st(2)
-	FFREE st(3)
-	FFREE st(4)
-	FFREE st(5)
-	FFREE st(6)
-	FFREE st(7)
-
-
-	; RESTA 
-	FLD _MULTIPLY
-	FLD _1
-	FSUB
-	FSTP _MINUS
-
-	; STACK CLENUP
-	FFREE st(0)
-	FFREE st(1)
-	FFREE st(2)
-	FFREE st(3)
-	FFREE st(4)
-	FFREE st(5)
-	FFREE st(6)
-	FFREE st(7)
-
-
-	; SUMA 
-	FLD _MINUS
-	FLD _5
-	FADD
-	FSTP _SUM
-
-	; STACK CLENUP
-	FFREE st(0)
-	FFREE st(1)
-	FFREE st(2)
-	FFREE st(3)
-	FFREE st(4)
-	FFREE st(5)
-	FFREE st(6)
-	FFREE st(7)
-
-
-	; SUMA 
-	FLD _SUM
-	FLD _4
-	FADD
-	FSTP _SUM
-
-	; STACK CLENUP
-	FFREE st(0)
-	FFREE st(1)
-	FFREE st(2)
-	FFREE st(3)
-	FFREE st(4)
-	FFREE st(5)
-	FFREE st(6)
-	FFREE st(7)
-
-
-	; SUMA 
-	FLD _SUM
-	FLD _20
-	FADD
-	FSTP _SUM
+	FCOM
+	JL LABEL_IF_1
 
 	; STACK CLENUP
 	FFREE st(0)
@@ -344,5 +120,83 @@ MAXTEXTSIZE equ 40
 
 
 	; ASIGNACION 
-	FLD _SUM
-	FSTP b3
+	FLD _44
+	FSTP b4
+LABEL_IF_1:
+
+	; STACK CLENUP
+	FFREE st(0)
+	FFREE st(1)
+	FFREE st(2)
+	FFREE st(3)
+	FFREE st(4)
+	FFREE st(5)
+	FFREE st(6)
+	FFREE st(7)
+
+
+	; => 
+	FLD b5
+	FLD _10
+	FCOM
+	JL LABEL_IF_2
+
+	; STACK CLENUP
+	FFREE st(0)
+	FFREE st(1)
+	FFREE st(2)
+	FFREE st(3)
+	FFREE st(4)
+	FFREE st(5)
+	FFREE st(6)
+	FFREE st(7)
+
+
+	; ASIGNACION 
+	FLD _44
+	FSTP b4
+LABEL_IF_2:
+
+	; STACK CLENUP
+	FFREE st(0)
+	FFREE st(1)
+	FFREE st(2)
+	FFREE st(3)
+	FFREE st(4)
+	FFREE st(5)
+	FFREE st(6)
+	FFREE st(7)
+
+
+	; => 
+	FLD b5
+	FLD _11
+	FCOM
+	JL LABEL_IF_3
+
+	; STACK CLENUP
+	FFREE st(0)
+	FFREE st(1)
+	FFREE st(2)
+	FFREE st(3)
+	FFREE st(4)
+	FFREE st(5)
+	FFREE st(6)
+	FFREE st(7)
+
+
+	; ASIGNACION 
+	FLD _44
+	FSTP b4
+LABEL_IF_3:
+
+	; STACK CLENUP
+	FFREE st(0)
+	FFREE st(1)
+	FFREE st(2)
+	FFREE st(3)
+	FFREE st(4)
+	FFREE st(5)
+	FFREE st(6)
+	FFREE st(7)
+

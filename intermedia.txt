@@ -1,1 +1,1 @@
-b1 = _8 CUERPO_ALGORITMH b2 = _9 CUERPO_ALGORITMH b2 = _1 + _2 + _3 + _4 CUERPO_ALGORITMH b1 = _8 - _3 + _2 - _1 CUERPO_ALGORITMH b4 = _8 * _3 + _3 - _2 + _1 * _5 CUERPO_ALGORITMH b3 = _8 / _3 * _2 - _1 + _5 + _4 + _20 
+b3 >= b4 AND b1 >= _2 IF b4 = _93 CUERPO_ALGORITMH b5 >= _9 AND b6 >= _3 IF b4 = _44 CUERPO_ALGORITMH b5 >= _10 IF b4 = _44 CUERPO_ALGORITMH b5 >= _11 IF b4 = _44 

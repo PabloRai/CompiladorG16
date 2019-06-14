@@ -7,6 +7,16 @@
 
 
 FILE *file;
+int ifLabelCount;
+int possibleDoubleCondition = 0;
+
+
+struct Stack { 
+    int top; 
+    int* array; 
+}; 
+
+struct Stack* stack;
 
 void generateAssembler(ast tree);
 void initASsembler();
@@ -16,9 +26,15 @@ void postOrder(ast* tree);
 void processNode(ast* tree);
 void stackCleanup();
 void insertAuxiliarsOperands();
+void pushOnStack();
+int pop();
+void push(int item);
 
 void generateAssembler(ast tree) {
     file = fopen("final.asm", "w");
+    ifLabelCount = 0;
+    stack = (struct Stack*) malloc(sizeof(struct Stack)); 
+    stack->array = (int*) malloc(5000* sizeof(int)); 
     initASsembler();
     insertSymbolsOnData();
     insertAuxiliarsOperands();
@@ -149,6 +165,36 @@ void processNode(ast* tree) {
         stackCleanup();
     }
 
+    if (strcmp(tree->value, ">=") == 0) {
+        fprintf(file,"\n\t; => \n");
+        fprintf(file,"\tFLD %s\n", tree->left->value);
+        fprintf(file,"\tFLD %s\n", tree->right->value);
+        fprintf(file,"\tFCOM\n");
+
+        if (possibleDoubleCondition == 1) {
+            possibleDoubleCondition = 0;
+            ifLabelCount--;
+        }
+        
+        fprintf(file,"\tJL LABEL_IF_%d\n", ifLabelCount);
+        push(ifLabelCount);
+        if (possibleDoubleCondition == 0) {
+            possibleDoubleCondition = 1;
+            ifLabelCount++;
+        }
+        
+        
+        stackCleanup();
+    }
+
+    if (strcmp(tree->value, "IF") == 0)
+    {
+        fprintf(file,"LABEL_IF_%d:\n", pop());
+        ifLabelCount++;
+        stackCleanup();
+    }
+    
+
     
     
 }
@@ -166,3 +212,12 @@ void stackCleanup() {
      fprintf(file, "\tFFREE st(7)\n");
      fprintf(file, "\n");
 }
+
+int pop() { 
+    return stack->array[stack->top--]; 
+}
+
+
+void push(int item) { 
+    stack->array[++stack->top] = item; 
+} 
