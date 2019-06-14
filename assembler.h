@@ -8,15 +8,22 @@
 
 FILE *file;
 int ifLabelCount;
-int possibleDoubleCondition = 0;
+int useSameIfLabel = 0;
+int orWasHere = 0;
 
 
-struct Stack { 
+struct StackForStatements { 
     int top; 
     int* array; 
 }; 
 
-struct Stack* stack;
+struct StackForOperators { 
+    int top; 
+    char array[5000][300]; 
+}; 
+
+struct StackForStatements* stack;
+struct StackForOperators* stackOperators;
 
 void generateAssembler(ast tree);
 void initASsembler();
@@ -29,12 +36,15 @@ void insertAuxiliarsOperands();
 void pushOnStack();
 int pop();
 void push(int item);
+char* popOperator();
+void pushOperator(char* item);
 
 void generateAssembler(ast tree) {
     file = fopen("final.asm", "w");
     ifLabelCount = 0;
-    stack = (struct Stack*) malloc(sizeof(struct Stack)); 
+    stack = (struct StackForStatements*) malloc(sizeof(struct StackForStatements)); 
     stack->array = (int*) malloc(5000* sizeof(int)); 
+    stackOperators = (struct StackForOperators*) malloc(sizeof(struct StackForOperators)); 
     initASsembler();
     insertSymbolsOnData();
     insertAuxiliarsOperands();
@@ -112,6 +122,49 @@ void postOrder(ast* tree) {
     return; 
 
     postOrder(tree->left); 
+    
+    if (strcmp(tree->value, "AND") == 0) {
+        char* op = popOperator();
+        useSameIfLabel = 1;
+        if (strcmp(op, ">=") == 0) {
+            fprintf(file, "\n\tJL LABEL_IF_%d\n", ifLabelCount);
+        }
+        push(ifLabelCount);
+        stackCleanup();
+    }
+
+    if (strcmp(tree->value, "OR") == 0) {
+        char* op = popOperator();
+        useSameIfLabel = 0;
+        if (strcmp(op, ">=") == 0) {
+            fprintf(file, "\n\tJGE LABEL_IF_%d\n", ifLabelCount);
+        }
+        push(ifLabelCount);
+        stackCleanup();
+        orWasHere = 1;
+    }
+
+    if (strcmp(tree->value, "IF") == 0) {
+        char* op = popOperator();
+        if (useSameIfLabel != 1) {
+            ifLabelCount++;
+        } else {
+            useSameIfLabel = 0;
+        }
+        
+        if (strcmp(op, ">=") == 0) {
+            fprintf(file, "\n\tJL LABEL_IF_%d\n", ifLabelCount);
+        }
+
+        if (orWasHere == 1) {
+            fprintf(file,"LABEL_IF_%d:\n", pop());
+            orWasHere = 0;
+        }
+        push(ifLabelCount);
+
+        
+        
+    }
 
     postOrder(tree->right); 
     printf("%s ", tree->value);
@@ -169,22 +222,8 @@ void processNode(ast* tree) {
         fprintf(file,"\n\t; => \n");
         fprintf(file,"\tFLD %s\n", tree->left->value);
         fprintf(file,"\tFLD %s\n", tree->right->value);
-        fprintf(file,"\tFCOM\n");
-
-        if (possibleDoubleCondition == 1) {
-            possibleDoubleCondition = 0;
-            ifLabelCount--;
-        }
-        
-        fprintf(file,"\tJL LABEL_IF_%d\n", ifLabelCount);
-        push(ifLabelCount);
-        if (possibleDoubleCondition == 0) {
-            possibleDoubleCondition = 1;
-            ifLabelCount++;
-        }
-        
-        
-        stackCleanup();
+        fprintf(file,"\tFCOM");
+        pushOperator(">=");
     }
 
     if (strcmp(tree->value, "IF") == 0)
@@ -220,4 +259,13 @@ int pop() {
 
 void push(int item) { 
     stack->array[++stack->top] = item; 
+} 
+
+char* popOperator() { 
+    return stackOperators->array[stackOperators->top--]; 
+}
+
+
+void pushOperator(char* item) { 
+    strcpy(stackOperators->array[++stackOperators->top],item); 
 } 

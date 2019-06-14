@@ -58,17 +58,6 @@ MAXTEXTSIZE equ 40
 	FCOM
 	JL LABEL_IF_0
 
-	; STACK CLENUP
-	FFREE st(0)
-	FFREE st(1)
-	FFREE st(2)
-	FFREE st(3)
-	FFREE st(4)
-	FFREE st(5)
-	FFREE st(6)
-	FFREE st(7)
-
-
 	; ASIGNACION 
 	FLD _93
 	FSTP b4
@@ -89,7 +78,7 @@ LABEL_IF_0:
 	FLD b5
 	FLD _9
 	FCOM
-	JL LABEL_IF_1
+	JGE LABEL_IF_1
 
 	; STACK CLENUP
 	FFREE st(0)
@@ -106,51 +95,8 @@ LABEL_IF_0:
 	FLD b6
 	FLD _3
 	FCOM
-	JL LABEL_IF_1
-
-	; STACK CLENUP
-	FFREE st(0)
-	FFREE st(1)
-	FFREE st(2)
-	FFREE st(3)
-	FFREE st(4)
-	FFREE st(5)
-	FFREE st(6)
-	FFREE st(7)
-
-
-	; ASIGNACION 
-	FLD _44
-	FSTP b4
-LABEL_IF_1:
-
-	; STACK CLENUP
-	FFREE st(0)
-	FFREE st(1)
-	FFREE st(2)
-	FFREE st(3)
-	FFREE st(4)
-	FFREE st(5)
-	FFREE st(6)
-	FFREE st(7)
-
-
-	; => 
-	FLD b5
-	FLD _10
-	FCOM
 	JL LABEL_IF_2
-
-	; STACK CLENUP
-	FFREE st(0)
-	FFREE st(1)
-	FFREE st(2)
-	FFREE st(3)
-	FFREE st(4)
-	FFREE st(5)
-	FFREE st(6)
-	FFREE st(7)
-
+LABEL_IF_1:
 
 	; ASIGNACION 
 	FLD _44
@@ -170,9 +116,14 @@ LABEL_IF_2:
 
 	; => 
 	FLD b5
-	FLD _11
+	FLD _10
 	FCOM
-	JL LABEL_IF_3
+	JL LABEL_IF_4
+
+	; ASIGNACION 
+	FLD _44
+	FSTP b4
+LABEL_IF_4:
 
 	; STACK CLENUP
 	FFREE st(0)
@@ -185,10 +136,16 @@ LABEL_IF_2:
 	FFREE st(7)
 
 
+	; => 
+	FLD b5
+	FLD _11
+	FCOM
+	JL LABEL_IF_6
+
 	; ASIGNACION 
 	FLD _44
 	FSTP b4
-LABEL_IF_3:
+LABEL_IF_6:
 
 	; STACK CLENUP
 	FFREE st(0)
