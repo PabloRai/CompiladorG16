@@ -230,7 +230,8 @@ int main(int argc, char *argv[]) {
   printf("\n --- INTERMEDIA --- \n");
   ast treeCopy = *tree;
   printAndSaveAST(tree);
-  generateAssembler();
+  printf("\n\n\n ASSEMBLER HERE \n\n\n");
+  generateAssembler(treeCopy);
 	return 0;
 }
 void yyerror(const char* s) {
