@@ -11,6 +11,7 @@ int ifLabelCount;
 int useSameIfLabel = 0;
 int orWasHere = 0;
 int forLabelCount;
+int whileLabelCount;
 
 
 struct StackForStatements { 
@@ -25,6 +26,7 @@ struct StackForOperators {
 
 struct StackForStatements* stackForIfs;
 struct StackForStatements* stackForFors;
+struct StackForStatements* stackForWhiles;
 struct StackForOperators* stackOperators;
 
 void generateAssembler(ast tree);
@@ -47,10 +49,13 @@ void generateAssembler(ast tree) {
     file = fopen("final.asm", "w");
     ifLabelCount = 0;
     forLabelCount = 0;
+    whileLabelCount = 0;
     stackForIfs = (struct StackForStatements*) malloc(sizeof(struct StackForStatements)); 
     stackForIfs->array = (int*) malloc(5000* sizeof(int)); 
     stackForFors = (struct StackForStatements*) malloc(sizeof(struct StackForStatements)); 
     stackForFors->array = (int*) malloc(5000* sizeof(int)); 
+    stackForWhiles = (struct StackForStatements*) malloc(sizeof(struct StackForStatements)); 
+    stackForWhiles->array = (int*) malloc(5000* sizeof(int)); 
     stackOperators = (struct StackForOperators*) malloc(sizeof(struct StackForOperators)); 
     initASsembler();
     insertSymbolsOnData();
@@ -128,6 +133,13 @@ void postOrder(ast* tree) {
     if (tree == NULL) 
     return; 
 
+    if (strcmp(tree->value, "WHILE") == 0) {
+        fprintf(file,"\nLABEL_WHILE_%d:\n", whileLabelCount);
+        push(stackForWhiles, whileLabelCount);
+        push(stackForWhiles, whileLabelCount);
+        whileLabelCount++;
+    }
+
     postOrder(tree->left); 
     
     if (strcmp(tree->value, "AND") == 0) {
@@ -174,9 +186,22 @@ void postOrder(ast* tree) {
         forLabelCount++;
     }
 
+    if (strcmp(tree->value, "WHILE") == 0) {
+        int value = pop(stackForWhiles);
+        char* op = popOperator();
+        fprintf(file,"\n\t%s LABEL_WHILE_OUT_%d\n", getInstructionFor(op), value);
+    }
+
     
 
     postOrder(tree->right); 
+
+    if (strcmp(tree->value, "WHILE") == 0) {
+        int value = pop(stackForWhiles);
+        fprintf(file,"\n\t%JMP LABEL_WHILE_%d\n", value);
+        fprintf(file,"\nLABEL_WHILE_OUT_%d:\n", value);
+    }
+
     printf("%s ", tree->value);
     processNode(tree);
 }
@@ -234,7 +259,7 @@ void processNode(ast* tree) {
         fprintf(file,"\tFLD %s\n", tree->right->value);
         fprintf(file,"\tFCOM");
         pushOperator(">=");
-        stackCleanup();
+        
     }
 
     if (strcmp(tree->value, "<=") == 0) {
@@ -243,7 +268,7 @@ void processNode(ast* tree) {
         fprintf(file,"\tFLD %s\n", tree->right->value);
         fprintf(file,"\tFCOM");
         pushOperator("<=");
-        stackCleanup();
+        
     }
 
     if (strcmp(tree->value, ">") == 0) {
@@ -252,7 +277,7 @@ void processNode(ast* tree) {
         fprintf(file,"\tFLD %s\n", tree->right->value);
         fprintf(file,"\tFCOM");
         pushOperator(">");
-        stackCleanup();
+        
     }
 
     if (strcmp(tree->value, "<") == 0) {
@@ -261,7 +286,7 @@ void processNode(ast* tree) {
         fprintf(file,"\tFLD %s\n", tree->right->value);
         fprintf(file,"\tFCOM");
         pushOperator("<");
-        stackCleanup();
+        
     }
 
     if (strcmp(tree->value, "==") == 0) {
@@ -270,7 +295,7 @@ void processNode(ast* tree) {
         fprintf(file,"\tFLD %s\n", tree->right->value);
         fprintf(file,"\tFCOM");
         pushOperator("==");
-        stackCleanup();
+        
     }
 
     if (strcmp(tree->value, "!=") == 0) {
@@ -279,7 +304,7 @@ void processNode(ast* tree) {
         fprintf(file,"\tFLD %s\n", tree->right->value);
         fprintf(file,"\tFCOM");
         pushOperator("!=");
-        stackCleanup();
+        
     }
 
     if (strcmp(tree->value, "IF") == 0) {
@@ -352,6 +377,10 @@ void pushOperator(char* item) {
 char* getInstructionFor(char* op) {
     if (strcmp(op, ">=") == 0) {
             return "JL";
+    }
+
+    if (strcmp(op, ">") == 0) {
+            return "JLE";
     }
 }
 
