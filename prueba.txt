@@ -45,13 +45,13 @@ IF (a1 > b2) {
   }
 }
 
-IF (b3 >= b4 AND b1 <= 2) {
+IF (b3 >= b4 AND b1 >= 2) {
         b4 := 93
 }
 
 IF (a1 > b2) {
  b2 := 3
- b3 := "sarasa"
+ b3 := 5
   IF (a1 > b2) {
 		a1 := 9
     WHILE(c1>c2) {
@@ -60,7 +60,7 @@ IF (a1 > b2) {
       NEXT b1
       a2 := 9
       a2 := 9.2
-      IF (b3 >= b4 OR b1 <= 2) {
+      IF (b3 >= b4 OR b1 >= 2) {
         b4 := 93
       }
     }
