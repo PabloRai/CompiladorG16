@@ -141,12 +141,12 @@ expression_list: expression_list COMMA expression {$$ = newNode(";", $1, $3); pr
 
 for_loop: FOR ID ASSIGNMENT_OPERATOR expression TO expression INTEGER_CONSTANT algorithms NEXT ID {
     compareIdentificators($2, $10);
-    $$ = newNode("FOR", newNode("=", newLeaf($2), newNode("FOR_OPCIONAL", newNode("TO", $4, $6), newLeaf(getSymbolName(&($7),1)))), newNode("CUERPO_FOR", $8, newNode("NEXT", newLeaf($2), NULL)));
+    $$ = newNode("FOR", newNode("FOR_CONDITION", newNode("=", newLeaf($2), $4), newNode("TO", newLeaf($2), $6)), newNode("CUERPO_FOR", $8, newNode("NEXT", newLeaf($2), newLeaf(getSymbolName(&($7),1)))));
     printf("\n Regla 18: for_loop: FOR ID ASSIGNMENT_OPERATOR expression TO expression INTEGER_CONSTANT algorithms NEXT ID \n");
     }
   | FOR ID ASSIGNMENT_OPERATOR expression TO expression algorithms NEXT ID {
     compareIdentificators($2, $9);
-    $$ = newNode("FOR", newNode("=", newLeaf($2), newNode("TO", $4, $6)), newNode("CUERPO_FOR", $7, newNode("NEXT", newLeaf($2), NULL)));
+    $$ = newNode("FOR", newNode("FOR_CONDITION", newNode("=", newLeaf($2), $4), newNode("TO", newLeaf($2), $6)), newNode("CUERPO_FOR", $7, newNode("NEXT", newLeaf($2), newLeaf("_1"))));   
     printf("\n Regla 19: for_loop: FOR ID ASSIGNMENT_OPERATOR expression TO expression algorithms NEXT ID \n");
     }
   ;

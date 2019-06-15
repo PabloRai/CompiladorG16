@@ -10,6 +10,7 @@ FILE *file;
 int ifLabelCount;
 int useSameIfLabel = 0;
 int orWasHere = 0;
+int forLabelCount;
 
 
 struct StackForStatements { 
@@ -22,7 +23,8 @@ struct StackForOperators {
     char array[5000][300]; 
 }; 
 
-struct StackForStatements* stack;
+struct StackForStatements* stackForIfs;
+struct StackForStatements* stackForFors;
 struct StackForOperators* stackOperators;
 
 void generateAssembler(ast tree);
@@ -34,16 +36,21 @@ void processNode(ast* tree);
 void stackCleanup();
 void insertAuxiliarsOperands();
 void pushOnStack();
-int pop();
-void push(int item);
+int pop(struct StackForStatements* stack);
+void push(struct StackForStatements* stack, int item);
 char* popOperator();
 void pushOperator(char* item);
+char* getInstructionFor(char* op);
+char* getRealInstructionFor(char* op);
 
 void generateAssembler(ast tree) {
     file = fopen("final.asm", "w");
     ifLabelCount = 0;
-    stack = (struct StackForStatements*) malloc(sizeof(struct StackForStatements)); 
-    stack->array = (int*) malloc(5000* sizeof(int)); 
+    forLabelCount = 0;
+    stackForIfs = (struct StackForStatements*) malloc(sizeof(struct StackForStatements)); 
+    stackForIfs->array = (int*) malloc(5000* sizeof(int)); 
+    stackForFors = (struct StackForStatements*) malloc(sizeof(struct StackForStatements)); 
+    stackForFors->array = (int*) malloc(5000* sizeof(int)); 
     stackOperators = (struct StackForOperators*) malloc(sizeof(struct StackForOperators)); 
     initASsembler();
     insertSymbolsOnData();
@@ -126,10 +133,8 @@ void postOrder(ast* tree) {
     if (strcmp(tree->value, "AND") == 0) {
         char* op = popOperator();
         useSameIfLabel = 1;
-        if (strcmp(op, ">=") == 0) {
-            fprintf(file, "\n\tJL LABEL_IF_%d\n", ifLabelCount);
-        }
-        push(ifLabelCount);
+        fprintf(file, "\n\t%s LABEL_IF_%d\n", getInstructionFor(op),ifLabelCount);
+        push(stackForIfs, ifLabelCount);
         stackCleanup();
     }
 
@@ -139,7 +144,7 @@ void postOrder(ast* tree) {
         if (strcmp(op, ">=") == 0) {
             fprintf(file, "\n\tJGE LABEL_IF_%d\n", ifLabelCount);
         }
-        push(ifLabelCount);
+        push(stackForIfs, ifLabelCount);
         stackCleanup();
         orWasHere = 1;
     }
@@ -152,19 +157,24 @@ void postOrder(ast* tree) {
             useSameIfLabel = 0;
         }
         
-        if (strcmp(op, ">=") == 0) {
-            fprintf(file, "\n\tJL LABEL_IF_%d\n", ifLabelCount);
-        }
-
+        fprintf(file, "\n\t%s LABEL_IF_%d\n", getInstructionFor(op),ifLabelCount);
+        
         if (orWasHere == 1) {
-            fprintf(file,"LABEL_IF_%d:\n", pop());
+            fprintf(file,"LABEL_IF_%d:\n", pop(stackForIfs));
             orWasHere = 0;
         }
-        push(ifLabelCount);
-
-        
-        
+        push(stackForIfs, ifLabelCount);
     }
+
+    
+    if (strcmp(tree->value, "TO") == 0) {
+        fprintf(file,"LABEL_FOR_%d:\n", forLabelCount);
+        push(stackForFors, forLabelCount);
+        push(stackForFors, forLabelCount);
+        forLabelCount++;
+    }
+
+    
 
     postOrder(tree->right); 
     printf("%s ", tree->value);
@@ -224,14 +234,82 @@ void processNode(ast* tree) {
         fprintf(file,"\tFLD %s\n", tree->right->value);
         fprintf(file,"\tFCOM");
         pushOperator(">=");
+        stackCleanup();
     }
 
-    if (strcmp(tree->value, "IF") == 0)
-    {
-        fprintf(file,"LABEL_IF_%d:\n", pop());
+    if (strcmp(tree->value, "<=") == 0) {
+        fprintf(file,"\n\t; <= \n");
+        fprintf(file,"\tFLD %s\n", tree->left->value);
+        fprintf(file,"\tFLD %s\n", tree->right->value);
+        fprintf(file,"\tFCOM");
+        pushOperator("<=");
+        stackCleanup();
+    }
+
+    if (strcmp(tree->value, ">") == 0) {
+        fprintf(file,"\n\t; > \n");
+        fprintf(file,"\tFLD %s\n", tree->left->value);
+        fprintf(file,"\tFLD %s\n", tree->right->value);
+        fprintf(file,"\tFCOM");
+        pushOperator(">");
+        stackCleanup();
+    }
+
+    if (strcmp(tree->value, "<") == 0) {
+        fprintf(file,"\n\t; < \n");
+        fprintf(file,"\tFLD %s\n", tree->left->value);
+        fprintf(file,"\tFLD %s\n", tree->right->value);
+        fprintf(file,"\tFCOM");
+        pushOperator("<");
+        stackCleanup();
+    }
+
+    if (strcmp(tree->value, "==") == 0) {
+        fprintf(file,"\n\t; == \n");
+        fprintf(file,"\tFLD %s\n", tree->left->value);
+        fprintf(file,"\tFLD %s\n", tree->right->value);
+        fprintf(file,"\tFCOM");
+        pushOperator("==");
+        stackCleanup();
+    }
+
+    if (strcmp(tree->value, "!=") == 0) {
+        fprintf(file,"\n\t; != \n");
+        fprintf(file,"\tFLD %s\n", tree->left->value);
+        fprintf(file,"\tFLD %s\n", tree->right->value);
+        fprintf(file,"\tFCOM");
+        pushOperator("!=");
+        stackCleanup();
+    }
+
+    if (strcmp(tree->value, "IF") == 0) {
+        fprintf(file,"LABEL_IF_%d:\n", pop(stackForIfs));
         ifLabelCount++;
         stackCleanup();
     }
+
+    if(strcmp(tree->value, "NEXT") == 0) {
+        fprintf(file,"\n\t; NEXT \n");
+        fprintf(file,"\tADD %s, %s\n", tree->left->value, tree->right->value);
+        int value = pop(stackForFors);
+        fprintf(file,"\tJMP LABEL_FOR_%d\n", value);
+        fprintf(file,"LABEL_FOR_OUT_%d:\n", value);
+
+        stackCleanup();
+    }
+
+    if(strcmp(tree->value, "TO") == 0) {
+        fprintf(file,"\n\t; TO \n");
+        fprintf(file,"\tFLD %s\n", tree->left->value);
+        fprintf(file,"\tFLD %s\n", tree->right->value);
+        fprintf(file,"\tFCOM\n");
+        int value = pop(stackForFors);
+        fprintf(file,"\tJG LABEL_FOR_OUT_%d:\n", value);
+        stackCleanup();
+    }
+
+
+    
     
 
     
@@ -252,12 +330,12 @@ void stackCleanup() {
      fprintf(file, "\n");
 }
 
-int pop() { 
+int pop(struct StackForStatements* stack) { 
     return stack->array[stack->top--]; 
 }
 
 
-void push(int item) { 
+void push(struct StackForStatements* stack, int item) { 
     stack->array[++stack->top] = item; 
 } 
 
@@ -269,3 +347,16 @@ char* popOperator() {
 void pushOperator(char* item) { 
     strcpy(stackOperators->array[++stackOperators->top],item); 
 } 
+
+
+char* getInstructionFor(char* op) {
+    if (strcmp(op, ">=") == 0) {
+            return "JL";
+    }
+}
+
+char* getRealInstructionFor(char* op) {
+    if (strcmp(op, ">=") == 0) {
+            return "BGE";
+    }
+}
