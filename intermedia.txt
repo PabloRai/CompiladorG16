@@ -1,1 +1,1 @@
-a1 > a2 WHILE b2 = _8 + _2 CUERPO_ALGORITMH a3 > a4 WHILE b2 = b1 * _3 
+a1 > a2 WHILE b2 = _8 CUERPO_ALGORITMH a1 > a2 IF b1 = _8 

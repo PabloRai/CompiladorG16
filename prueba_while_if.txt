@@ -8,6 +8,6 @@ ENDDEF
 WHILE (a1 > a2) {
   b2 := 8
   IF(a1 > a2) {
-    c1 := "HOLA"
+    b1 := 8
   }
 }
