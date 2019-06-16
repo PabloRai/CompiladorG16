@@ -80,8 +80,7 @@ void generateAssembler(ast tree) {
 
 
 void initAssembler() {
-    fprintf(file,"include  macros2.asm \n");
-    fprintf(file,"include  number.asm\n\n\n");
+    fprintf(file,"include  macros2.asm \n\n\n");
     fprintf(file,".MODEL LARGE\n");
     fprintf(file,".386\n");
     fprintf(file,".STACK 200h\n\n");
