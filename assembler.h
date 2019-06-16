@@ -423,10 +423,46 @@ char* getInstructionFor(char* op) {
     if (strcmp(op, ">") == 0) {
             return "JLE";
     }
+
+    if (strcmp(op, "<=") == 0) {
+            return "JG";
+    }
+
+    if (strcmp(op, "<") == 0) {
+            return "JGE";
+    }
+
+    if (strcmp(op, "==") == 0) {
+            return "JNE";
+    }
+
+    if (strcmp(op, "!=") == 0) {
+            return "JE";
+    }
 }
 
 char* getRealInstructionFor(char* op) {
     if (strcmp(op, ">=") == 0) {
             return "BGE";
+    }
+
+    if (strcmp(op, ">") == 0) {
+            return "JG";
+    }
+
+    if (strcmp(op, "<=") == 0) {
+            return "JLE";
+    }
+
+    if (strcmp(op, "<") == 0) {
+            return "JL";
+    }
+
+    if (strcmp(op, "==") == 0) {
+            return "JE";
+    }
+
+    if (strcmp(op, "!=") == 0) {
+            return "JNE";
     }
 }
