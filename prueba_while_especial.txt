@@ -3,7 +3,7 @@ DEFVAR
 ENDDEF
 
 
-WHILE b1 IN [2,3,b1, b2+b1] 
+WHILE b1 IN [2,3,b2, b2+b1] 
 DO
     b1 := 8
 ENDWHILE

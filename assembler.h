@@ -12,6 +12,8 @@ int useSameIfLabel = 0;
 int orWasHere = 0;
 int forLabelCount;
 int whileLabelCount;
+int whileSpecialLabelCount;
+int insideInStatement;
 
 
 struct StackForStatements { 
@@ -27,6 +29,7 @@ struct StackForOperators {
 struct StackForStatements* stackForIfs;
 struct StackForStatements* stackForFors;
 struct StackForStatements* stackForWhiles;
+struct StackForStatements* stackForWhileSpecials;
 struct StackForOperators* stackOperators;
 
 void generateAssembler(ast tree);
@@ -50,12 +53,16 @@ void generateAssembler(ast tree) {
     ifLabelCount = 0;
     forLabelCount = 0;
     whileLabelCount = 0;
+    whileSpecialLabelCount = 0;
+    insideInStatement = 0;
     stackForIfs = (struct StackForStatements*) malloc(sizeof(struct StackForStatements)); 
     stackForIfs->array = (int*) malloc(5000* sizeof(int)); 
     stackForFors = (struct StackForStatements*) malloc(sizeof(struct StackForStatements)); 
     stackForFors->array = (int*) malloc(5000* sizeof(int)); 
     stackForWhiles = (struct StackForStatements*) malloc(sizeof(struct StackForStatements)); 
     stackForWhiles->array = (int*) malloc(5000* sizeof(int)); 
+    stackForWhileSpecials = (struct StackForStatements*) malloc(sizeof(struct StackForStatements)); 
+    stackForWhileSpecials->array = (int*) malloc(5000* sizeof(int)); 
     stackOperators = (struct StackForOperators*) malloc(sizeof(struct StackForOperators)); 
     initASsembler();
     insertSymbolsOnData();
@@ -114,6 +121,7 @@ void insertAuxiliarsOperands() {
     fprintf(file,"\t_MINUS dd ?\n");
     fprintf(file,"\t_DIVIDE dd ?\n");
     fprintf(file,"\t_MULTIPLY dd ?\n");
+    fprintf(file,"\t_AUXILIAR dd ?\n");
 
 }
 
@@ -140,7 +148,20 @@ void postOrder(ast* tree) {
         whileLabelCount++;
     }
 
+    if (strcmp(tree->value, "WHILE_SPECIAL") == 0) {
+        fprintf(file,"\nLABEL_WHILE_SPECIAL_%d:\n", whileSpecialLabelCount);
+        push(stackForWhileSpecials, whileSpecialLabelCount);
+        push(stackForWhileSpecials, whileSpecialLabelCount);
+        whileSpecialLabelCount++;
+    }
+
     postOrder(tree->left); 
+
+    if (strcmp(tree->value, "IN") == 0) {
+        fprintf(file,"\n\t; IN \n");
+        insideInStatement = 1;
+        fprintf(file,"\tMOV _AUXILIAR, %s\n", tree->left->value);
+    }
     
     if (strcmp(tree->value, "AND") == 0) {
         char* op = popOperator();
@@ -200,6 +221,12 @@ void postOrder(ast* tree) {
         int value = pop(stackForWhiles);
         fprintf(file,"\n\t%JMP LABEL_WHILE_%d\n", value);
         fprintf(file,"\nLABEL_WHILE_OUT_%d:\n", value);
+    }
+
+    if (strcmp(tree->value, "WHILE_SPECIAL") == 0) {
+        int value = pop(stackForWhileSpecials);
+        fprintf(file,"\n\t%JMP LABEL_WHILE_SPECIAL_%d\n", value);
+        fprintf(file,"\nLABEL_WHILE_SPECIAL_OUT_%d:\n", value);
     }
 
     printf("%s ", tree->value);
@@ -333,12 +360,26 @@ void processNode(ast* tree) {
         stackCleanup();
     }
 
+    if (strcmp(tree->value, "LIST") == 0) {
 
-    
+        fprintf(file,"\n\t; LIST \n");
+        fprintf(file,"\tFLD _AUXILIAR\n");
+        fprintf(file,"\tFLD %s\n", tree->right->value);
+        fprintf(file,"\tFCOM\n");
+        int value = pop(stackForWhileSpecials);
+        push(stackForWhileSpecials, value);
+        fprintf(file,"\tJE LABEL_WHILE_SPECIAL_TRUE_%d:\n", value);
+
+        stackCleanup();
+    }
+
+    if (strcmp(tree->value, "IN") == 0) {
+        int value = pop(stackForWhileSpecials);
+        fprintf(file,"\n\tJMP LABEL_WHILE_SPECIAL_OUT_%d\n", value);
+        fprintf(file,"\nLABEL_WHILE_SPECIAL_TRUE_%d: \n", value);
+    }
     
 
-    
-    
 }
 
 

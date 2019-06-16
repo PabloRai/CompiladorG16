@@ -135,7 +135,7 @@ while_loop: WHILE OPENING_PARENTHESIS condition CLOSING_PARENTHESIS OPENING_KEY 
 while_special: WHILE ID IN OPENING_SQUARE_BRACKET expression_list CLOSING_SQUARE_BRACKET DO algorithms ENDWHILE {validateIdIsDeclared($2); $$ = newNode("WHILE_SPECIAL", newNode("IN", newLeaf($2), $5), $8); printf("\n Regla 15: while_special: WHILE ID IN OPENING_SQUARE_BRACKET expression_list CLOSING_SQUARE_BRACKET DO algorithms ENDWHILE \n");}
   ;
 
-expression_list: expression_list COMMA expression {$$ = newNode(";", $1, $3); printf("\n Regla 16: expression_list: expression_list COMMA expression \n");}
+expression_list: expression_list COMMA expression {$$ = newNode("LIST", $1, $3); printf("\n Regla 16: expression_list: expression_list COMMA expression \n");}
   | expression {$$ = $1; printf("\n Regla 17: expression_list: expression \n");}
   ;
 
