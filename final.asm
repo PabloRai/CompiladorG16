@@ -13,7 +13,7 @@ MAXTEXTSIZE equ 40
 	_0xABF dd 2751.0
 	_0b110 dd 6.0
 	_9 dd 9.0
-	_HOLA db HOLA,'$', 4 dup (?)
+	_HOLA db 'HOLA','$', 4 dup (?)
 	_8 dd 8.0
 	_2 dd 2.0
 	_3 dd 3.0
@@ -226,8 +226,9 @@ LABEL_WHILE_0:
 	JLE LABEL_IF_1
 
 	; ASIGNACION 
-	FLD _HOLA
-	FSTP c1
+	LEA SI, _HOLA
+	LEA DI,c1
+	CALL COPY
 LABEL_IF_1:
 
 	; STACK CLENUP
@@ -306,6 +307,9 @@ LABEL_IF_5:
 	; ASIGNACION 
 	FLD _3
 	FSTP b2
+
+	; GET
+	getString b1
 
 	; > 
 	FLD a1
@@ -729,3 +733,39 @@ LABEL_WHILE_SPECIAL_OUT_1:
 	JMP LABEL_WHILE_SPECIAL_0
 
 LABEL_WHILE_SPECIAL_OUT_0:
+
+
+
+	; END PROGRAM 
+
+	mov AX, 4C00h
+	int 21h
+
+
+	; ROUTINES
+STRLEN PROC
+	mov bx,0
+STRL01:
+	cmp BYTE PTR [SI+BX],'$'
+	je STREND
+	inc BX
+	cmp BX, MAXTEXTSIZE
+	jl STRL01
+STREND:
+	ret
+STRLEN ENDP
+
+COPY PROC
+	call STRLEN	cmp bx,MAXTEXTSIZE
+	jle COPYSIZEOK
+	mov bx,MAXTEXTSIZE
+COPYSIZEOK:
+	mov cx,bx
+	cld
+	rep movsb
+	mov al,'$'
+	mov BYTE PTR [DI],al
+	ret
+COPY ENDP
+
+END begin

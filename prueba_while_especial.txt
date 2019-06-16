@@ -1,5 +1,6 @@
 DEFVAR
    INT : b1;b2;b3;b4
+   STRING: c1
 ENDDEF
 
 
@@ -7,3 +8,9 @@ WHILE b1 IN [2,3,b2, b2+b1]
 DO
     b1 := 8
 ENDWHILE
+
+DISPLAY "hola"
+
+c1 := "pepe"
+
+GET c1

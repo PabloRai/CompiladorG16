@@ -33,7 +33,7 @@ struct StackForStatements* stackForWhileSpecials;
 struct StackForOperators* stackOperators;
 
 void generateAssembler(ast tree);
-void initASsembler();
+void initAssembler();
 void insertSymbolsOnData();
 void insertInitialCodeBlock();
 void postOrder(ast* tree);
@@ -47,6 +47,8 @@ char* popOperator();
 void pushOperator(char* item);
 char* getInstructionFor(char* op);
 char* getRealInstructionFor(char* op);
+void finishAssembler();
+void assemblerRutines();
 
 void generateAssembler(ast tree) {
     file = fopen("final.asm", "w");
@@ -64,11 +66,12 @@ void generateAssembler(ast tree) {
     stackForWhileSpecials = (struct StackForStatements*) malloc(sizeof(struct StackForStatements)); 
     stackForWhileSpecials->array = (int*) malloc(5000* sizeof(int)); 
     stackOperators = (struct StackForOperators*) malloc(sizeof(struct StackForOperators)); 
-    initASsembler();
+    initAssembler();
     insertSymbolsOnData();
     insertAuxiliarsOperands();
     insertInitialCodeBlock();
     postOrder(&tree);
+    finishAssembler();
     fclose(file);
 
 }
@@ -76,7 +79,7 @@ void generateAssembler(ast tree) {
 
 
 
-void initASsembler() {
+void initAssembler() {
     fprintf(file,"include  macros2.asm \n");
     fprintf(file,"include  number.asm\n\n\n");
     fprintf(file,".MODEL LARGE\n");
@@ -107,7 +110,7 @@ void insertSymbolsOnData() {
         }
 
         if (strcmp(current->type, "STRING_C") == 0) {
-            fprintf(file,"\t%s db %s,'$', %d dup (?)\n", current->name, current->value, current->length);
+            fprintf(file,"\t%s db '%s','$', %d dup (?)\n", current->name, current->value, current->length);
         }
         
         current = current->next;
@@ -236,6 +239,18 @@ void postOrder(ast* tree) {
 void processNode(ast* tree) {
     if (strcmp(tree->value, "=") == 0) {
         fprintf(file,"\n\t; ASIGNACION \n");
+        if (strcmp(tree->right->value, "_SUM") != 0 && strcmp(tree->right->value, "_MINUS") != 0 && strcmp(tree->right->value, "_MULTIPLY") != 0 && strcmp(tree->right->value, "_DIVIDE") != 0) {
+            symbolNode* symbol = findSymbol(tree->right->value);
+            if(symbol != NULL && symbol->length > 0) {
+                fprintf(file,"\tLEA SI, %s\n", tree->right->value); 
+                fprintf(file,"\tLEA DI,%s\n", tree->left->value);
+                fprintf(file,"\tCALL COPY\n");
+                return;
+            }
+        }
+        
+        
+
         fprintf(file,"\tFLD %s\n", tree->right->value);
         fprintf(file,"\tFSTP %s\n", tree->left->value);
     }
@@ -378,8 +393,22 @@ void processNode(ast* tree) {
         fprintf(file,"\n\tJMP LABEL_WHILE_SPECIAL_OUT_%d\n", value);
         fprintf(file,"\nLABEL_WHILE_SPECIAL_TRUE_%d: \n", value);
     }
-    
 
+    if (strcmp(tree->value, "DISPLAY") == 0) {
+        fprintf(file,"\n\t; DISPLAY\n");
+        fprintf(file,"\tMOV DX, %s\n", tree->left->value);
+        fprintf(file,"\tMOV AH, 9\n");
+        fprintf(file,"\tINT 0x21\n");
+        fprintf(file,"\tMOV AH, 0x4c\n");
+        fprintf(file,"\tINT 0x21\n");
+    }
+
+
+    if (strcmp(tree->value, "GET") == 0) {
+        fprintf(file,"\n\t; GET\n");
+        fprintf(file, "\tgetString %s\n", tree->left->value);
+    }
+    
 }
 
 
@@ -466,3 +495,43 @@ char* getRealInstructionFor(char* op) {
             return "JNE";
     }
 }
+
+
+void finishAssembler() {
+    fprintf(file,"\n\n\n\t; END PROGRAM \n\n");
+    fprintf(file,"\tmov AX, 4C00h\n");
+    fprintf(file,"\tint 21h\n");
+    assemblerRutines();
+    fprintf(file,"END begin\n");
+}
+
+void assemblerRutines() {
+
+    fprintf(file, "\n\n\t; ROUTINES\n");
+    fprintf(file, "STRLEN PROC\n");
+    fprintf(file, "\tmov bx,0\n");
+    fprintf(file, "STRL01:\n");
+    fprintf(file, "\tcmp BYTE PTR [SI+BX],'$'\n");
+    fprintf(file, "\tje STREND\n");
+    fprintf(file, "\tinc BX\n");
+    fprintf(file, "\tcmp BX, MAXTEXTSIZE\n");
+    fprintf(file, "\tjl STRL01\n");
+    fprintf(file, "STREND:\n");
+    fprintf(file, "\tret\n");
+    fprintf(file, "STRLEN ENDP\n\n");
+
+
+    fprintf(file, "COPY PROC\n");
+    fprintf(file, "\tcall STRLEN");
+    fprintf(file, "\tcmp bx,MAXTEXTSIZE\n");
+    fprintf(file, "\tjle COPYSIZEOK\n");
+    fprintf(file, "\tmov bx,MAXTEXTSIZE\n");
+    fprintf(file, "COPYSIZEOK:\n");
+    fprintf(file, "\tmov cx,bx\n");
+    fprintf(file, "\tcld\n");
+    fprintf(file, "\trep movsb\n");
+    fprintf(file, "\tmov al,'$'\n");
+    fprintf(file, "\tmov BYTE PTR [DI],al\n");
+    fprintf(file, "\tret\n");
+    fprintf(file, "COPY ENDP\n\n");
+} 
