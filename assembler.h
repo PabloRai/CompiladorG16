@@ -80,7 +80,7 @@ void generateAssembler(ast tree) {
 
 
 void initAssembler() {
-    fprintf(file,"include  macros2.asm \n\n\n");
+    fprintf(file,"include macros2.asm \n\n\n");
     fprintf(file,".MODEL LARGE\n");
     fprintf(file,".386\n");
     fprintf(file,".STACK 200h\n\n");
@@ -162,7 +162,8 @@ void postOrder(ast* tree) {
     if (strcmp(tree->value, "IN") == 0) {
         fprintf(file,"\n\t; IN \n");
         insideInStatement = 1;
-        fprintf(file,"\tMOV _AUXILIAR, %s\n", tree->left->value);
+        fprintf(file,"\tMOV EAX, %s\n", tree->left->value);
+        fprintf(file,"\tMOV _AUXILIAR, EAX\n");
     }
     
     if (strcmp(tree->value, "AND") == 0) {
@@ -356,7 +357,10 @@ void processNode(ast* tree) {
 
     if(strcmp(tree->value, "NEXT") == 0) {
         fprintf(file,"\n\t; NEXT \n");
-        fprintf(file,"\tADD %s, %s\n", tree->left->value, tree->right->value);
+        fprintf(file,"\tMOV EAX, %s\n", tree->left->value);
+        fprintf(file,"\tADD EAX, %s\n", tree->right->value);
+        fprintf(file,"\tMOV %s, EAX\n", tree->left->value);
+
         int value = pop(stackForFors);
         fprintf(file,"\tJMP LABEL_FOR_%d\n", value);
         fprintf(file,"LABEL_FOR_OUT_%d:\n", value);
@@ -370,7 +374,7 @@ void processNode(ast* tree) {
         fprintf(file,"\tFLD %s\n", tree->right->value);
         fprintf(file,"\tFCOM\n");
         int value = pop(stackForFors);
-        fprintf(file,"\tJG LABEL_FOR_OUT_%d:\n", value);
+        fprintf(file,"\tJG LABEL_FOR_OUT_%d\n", value);
         stackCleanup();
     }
 
@@ -382,7 +386,7 @@ void processNode(ast* tree) {
         fprintf(file,"\tFCOM\n");
         int value = pop(stackForWhileSpecials);
         push(stackForWhileSpecials, value);
-        fprintf(file,"\tJE LABEL_WHILE_SPECIAL_TRUE_%d:\n", value);
+        fprintf(file,"\tJE LABEL_WHILE_SPECIAL_TRUE_%d\n", value);
 
         stackCleanup();
     }

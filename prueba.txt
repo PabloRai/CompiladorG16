@@ -54,7 +54,7 @@ IF (a1 > b2) {
  b3 := 5
   IF (a1 > b2) {
 		a1 := 9
-    WHILE(c1>c2) {
+    WHILE(b1>b2) {
       FOR b1 := 1 TO 5 2
         a2 := 3
       NEXT b1
