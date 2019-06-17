@@ -136,7 +136,10 @@ void insertInitialCodeBlock() {
     fprintf(file,"\tmov AX,@DATA\n");
     fprintf(file,"\tmov DS,AX\n");
     fprintf(file,"\tmov ES,AX\n");
-    fprintf(file,"\tfinit\n");
+    fprintf(file,"\tfinit\n\n");
+
+    assemblerRutines();
+    fprintf(file,"\n\n");
 }
 
 void postOrder(ast* tree) {
@@ -508,7 +511,7 @@ void finishAssembler() {
     fprintf(file,"\n\n\n\t; END PROGRAM \n\n");
     fprintf(file,"\tmov AX, 4C00h\n");
     fprintf(file,"\tint 21h\n");
-    assemblerRutines();
+   
     fprintf(file,"END begin\n");
 }
 
@@ -529,7 +532,7 @@ void assemblerRutines() {
 
 
     fprintf(file, "COPY PROC\n");
-    fprintf(file, "\tcall STRLEN");
+    fprintf(file, "\tcall STRLEN\n");
     fprintf(file, "\tcmp bx,MAXTEXTSIZE\n");
     fprintf(file, "\tjle COPYSIZEOK\n");
     fprintf(file, "\tmov bx,MAXTEXTSIZE\n");

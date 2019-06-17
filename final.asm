@@ -41,6 +41,38 @@ MAXTEXTSIZE equ 40
 	mov ES,AX
 	finit
 
+
+
+	; ROUTINES
+STRLEN PROC
+	mov bx,0
+STRL01:
+	cmp BYTE PTR [SI+BX],'$'
+	je STREND
+	inc BX
+	cmp BX, MAXTEXTSIZE
+	jl STRL01
+STREND:
+	ret
+STRLEN ENDP
+
+COPY PROC
+	call STRLEN
+	cmp bx,MAXTEXTSIZE
+	jle COPYSIZEOK
+	mov bx,MAXTEXTSIZE
+COPYSIZEOK:
+	mov cx,bx
+	cld
+	rep movsb
+	mov al,'$'
+	mov BYTE PTR [DI],al
+	ret
+COPY ENDP
+
+
+
+
 	; ASIGNACION 
 	FLD _1
 	FSTP b1
@@ -738,32 +770,4 @@ LABEL_WHILE_SPECIAL_OUT_0:
 
 	mov AX, 4C00h
 	int 21h
-
-
-	; ROUTINES
-STRLEN PROC
-	mov bx,0
-STRL01:
-	cmp BYTE PTR [SI+BX],'$'
-	je STREND
-	inc BX
-	cmp BX, MAXTEXTSIZE
-	jl STRL01
-STREND:
-	ret
-STRLEN ENDP
-
-COPY PROC
-	call STRLEN	cmp bx,MAXTEXTSIZE
-	jle COPYSIZEOK
-	mov bx,MAXTEXTSIZE
-COPYSIZEOK:
-	mov cx,bx
-	cld
-	rep movsb
-	mov al,'$'
-	mov BYTE PTR [DI],al
-	ret
-COPY ENDP
-
 END begin
