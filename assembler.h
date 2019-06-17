@@ -157,6 +157,10 @@ void postOrder(ast* tree) {
         whileSpecialLabelCount++;
     }
 
+    if (strcmp(tree->value, "IF") == 0) {
+        ifLabelCount++;
+    }
+
     postOrder(tree->left); 
 
     if (strcmp(tree->value, "IN") == 0) {
