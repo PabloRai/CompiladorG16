@@ -73,3 +73,7 @@ DO
         b1 := 8
     ENDWHILE
 ENDWHILE
+
+GET c1
+
+DISPLAY "cadena"

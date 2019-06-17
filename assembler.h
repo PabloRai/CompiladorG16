@@ -406,11 +406,7 @@ void processNode(ast* tree) {
 
     if (strcmp(tree->value, "DISPLAY") == 0) {
         fprintf(file,"\n\t; DISPLAY\n");
-        fprintf(file,"\tMOV DX, %s\n", tree->left->value);
-        fprintf(file,"\tMOV AH, 9\n");
-        fprintf(file,"\tINT 0x21\n");
-        fprintf(file,"\tMOV AH, 0x4c\n");
-        fprintf(file,"\tINT 0x21\n");
+        fprintf(file,"\tdisplayString %s\n", tree->left->value);
     }
 
 

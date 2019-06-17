@@ -8,6 +8,7 @@ include macros2.asm
 MAXTEXTSIZE equ 40
 
 .DATA
+	_cadena db 'cadena','$', 6 dup (?)
 	_93 dd 93.0
 	_0xABF dd 2751.0
 	_0b110 dd 6.0
@@ -763,6 +764,12 @@ LABEL_WHILE_SPECIAL_OUT_1:
 	JMP LABEL_WHILE_SPECIAL_0
 
 LABEL_WHILE_SPECIAL_OUT_0:
+
+	; GET
+	getString c1
+
+	; DISPLAY
+	displayString _cadena
 
 
 
