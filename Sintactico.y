@@ -14,6 +14,11 @@ void saveIdentifierDeclarationType();
 char currentIdentifierDeclarationType[7];
 void validateIdIsDeclared();
 void compareIdentificators();
+void validateIdDeclaration();
+void validateType();
+
+char* seen[200];
+int seenIndex = 0;
 
 ast* tree;
 %}
@@ -210,8 +215,8 @@ variable_type: INT_TYPE {saveIdentifierDeclarationType($1); printf("\n Regla 52:
   | FLOAT_TYPE {saveIdentifierDeclarationType($1); printf("\n Regla 53: variable_type: FLOAT_TYPE \n");}
   | STRING_TYPE {saveIdentifierDeclarationType($1); printf("\n Regla 54: variable_type: STRING_TYPE \n");}
   ;
-variable_list: variable_list SEMICOLON ID {insertIdentifier($3); printf("\n Regla 55: variable_list: variable_list SEMICOLON ID \n");} 
-  | ID {insertIdentifier($1); printf("\n Regla 56: variable_list: ID \n");}
+variable_list: variable_list SEMICOLON ID {validateIdDeclaration($3); insertIdentifier($3); printf("\n Regla 55: variable_list: variable_list SEMICOLON ID \n");} 
+  | ID {validateIdDeclaration($1); insertIdentifier($1); printf("\n Regla 56: variable_list: ID \n");}
   ;
 
 
@@ -245,7 +250,7 @@ void saveIdentifierDeclarationType(char* identiferName) {
 
 void validateIdIsDeclared(char* id) {
   symbolNode* symbol = findSymbol(id);
-  if (symbol == NULL || symbol->type == NULL) {
+  if (symbol == NULL || strcmp(symbol->type, "") == 0) {
     fprintf(stderr, "\nVariable: %s is not declared on the declaration block on line %d\n", id, yylineno);
     exit(1);
   }
@@ -257,3 +262,50 @@ void compareIdentificators(char* firstIdentificator, char* secondIdentificator) 
     exit(1);
   }
 }
+
+void validateIdDeclaration(char* id) {
+  int i = 0;
+  for(i = 0; i < seenIndex; i++) {
+    if(strcmp(seen[i], id) == 0) {
+      fprintf(stderr, "\n Identificator already declared, line: %d\n", yylineno);
+    exit(1);
+    }
+  }
+  
+  seen[seenIndex] = strdup(id);
+  seenIndex++;
+}
+
+void validateType(ast* left, ast* right, int fail) {
+  if(left->value != NULL) {
+    printf("\n\n GOT left.value %s \n", left->value);
+    symbolNode* symbolLeft = findSymbol(left->value);
+    if(symbolLeft != NULL) {
+      if(fail == 1 && (
+          
+          strcmp(symbolLeft->type, "STRING") == 0 || 
+          strcmp(symbolLeft->type, "STRING_C") == 0)) {
+        fprintf(stderr, "\n Incompatible operation, line: %d\n", yylineno);
+        exit(1);
+      }
+    }
+  }
+
+   if(right->value != NULL) {
+     printf("\n\n GOT right.value %s \n", right->value);
+    symbolNode* symbolRight = findSymbol(right->value);
+    if(symbolRight != NULL) {
+      if(fail == 1 && (
+          
+          strcmp(symbolRight->type, "STRING") == 0 || 
+          strcmp(symbolRight->type, "STRING_C") == 0)) {
+        fprintf(stderr, "\n Incompatible operation, line: %d\n", yylineno);
+        exit(1);
+      }
+    }
+  }
+
+  
+}
+
+

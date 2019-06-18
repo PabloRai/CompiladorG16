@@ -115,7 +115,6 @@ symbolNode* insert(char* value) {
 
 symbolNode* findSymbol(char* value) {
     symbolNode* tableNode = symbolTable;
-    
     while(tableNode != NULL){
         if ((tableNode->value != NULL && strcmp(value, tableNode->value) == 0) || (strcmp(value, tableNode->name) == 0)) {
             return tableNode;
