@@ -20,7 +20,6 @@ FILE *file;
 
 ast* newNode(char* operation, ast* leftNode, ast* rightNode) {
     ast* node = (ast*) malloc(sizeof(ast));
-    
     node->value = operation;
     node->left = leftNode;
     node->right = rightNode;

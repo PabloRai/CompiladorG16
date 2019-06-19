@@ -16,6 +16,7 @@ void validateIdIsDeclared();
 void compareIdentificators();
 void validateIdDeclaration();
 void validateType();
+void validateAsignation();
 
 char* seen[200];
 int seenIndex = 0;
@@ -133,7 +134,7 @@ algorithm: decision {printf("\n Regla 5: algorithm: decision \n"); $$ = $1;}
 
 decision: IF OPENING_PARENTHESIS condition CLOSING_PARENTHESIS OPENING_KEY algorithms CLOSING_KEY {$$ = newNode("IF", $3, $6); printf("\n Regla 12: decision: IF OPENING_PARENTHESIS condition CLOSING_PARENTHESIS OPENING_KEY algorithms CLOSING_KEY \n");};
 
-assignment: ID ASSIGNMENT_OPERATOR expression {validateIdIsDeclared($1); $$ = newNode("=", newLeaf($1), $3); printf("\n Regla 13: assignment: ID ASSIGNMENT_OPERATOR expression \n");};
+assignment: ID ASSIGNMENT_OPERATOR expression {validateAsignation($1, $3);validateIdIsDeclared($1); $$ = newNode("=", newLeaf($1), $3); printf("\n Regla 13: assignment: ID ASSIGNMENT_OPERATOR expression \n");};
 
 while_loop: WHILE OPENING_PARENTHESIS condition CLOSING_PARENTHESIS OPENING_KEY algorithms CLOSING_KEY {$$ = newNode("WHILE", $3, $6); printf("\n Regla 14: while_loop: WHILE OPENING_PARENTHESIS condition CLOSING_PARENTHESIS OPENING_KEY algorithms CLOSING_KEY \n");};
 
@@ -169,7 +170,7 @@ condition: comparation {$$ = $1; printf("\n Regla 25: condition: comparation \n"
   | NOT_LOGIC_OPERATOR comparation {$$ = newNode("!", $2, NULL); printf("\n Regla 27: condition: NOT_LOGIC_OPERATOR comparation \n");}
   ;
 
-comparation: expression  logic_operator  expression {$$ = newNode($2, $1, $3); printf("\n Regla 28: comparation: expression  logic_operator  expression \n");}
+comparation: expression  logic_operator  expression {validateType($1, $3, 1); $$ = newNode($2, $1, $3); printf("\n Regla 28: comparation: expression  logic_operator  expression \n");}
   ;
 
 logic_operator: EQUALS_LOGIC_OPERATOR {$$ = "="; printf("\n Regla 29: logic_operator: EQUALS_LOGIC_OPERATOR \n");}
@@ -184,13 +185,13 @@ logic_concatenator: OR {$$ = "OR"; printf("\n Regla 35: logic_concatenator: OR \
   | AND {$$ = "AND"; printf("\n Regla 36: logic_concatenator: AND \n");}
   ;
 
-expression: expression SUM_OPERATOR term {$$ = newNode("+", $1, $3); printf("\n Regla 37: expression: expression SUM_OPERATOR term\n");}
-  | expression MINUS_OPERATOR term {$$ = newNode("-", $1, $3); printf("\n Regla 38: expression: expression MINUS_OPERATOR term\n");}
+expression: expression SUM_OPERATOR term {validateType($1, $3, 1); $$ = newNode("+", $1, $3); printf("\n Regla 37: expression: expression SUM_OPERATOR term\n");}
+  | expression MINUS_OPERATOR term {validateType($1, $3, 1); $$ = newNode("-", $1, $3); printf("\n Regla 38: expression: expression MINUS_OPERATOR term\n");}
   | term {$$ = $1; printf("\n Regla 39: expression: term\n");}
   ;
 
-term: term MULTIPLIER_OPERATOR factor {$$ = newNode("*", $1, $3); printf("\n Regla 40: term: term MULTIPLIER_OPERATOR factor\n");}
-  | term DIVIDE_OPERATOR factor {$$ = newNode("/", $1, $3); printf("\n Regla 41: term: term DIVIDE_OPERATOR factor\n");}
+term: term MULTIPLIER_OPERATOR factor {validateType($1, $3, 1); $$ = newNode("*", $1, $3); printf("\n Regla 40: term: term MULTIPLIER_OPERATOR factor\n");}
+  | term DIVIDE_OPERATOR factor {validateType($1, $3, 1); $$ = newNode("/", $1, $3); printf("\n Regla 41: term: term DIVIDE_OPERATOR factor\n");}
   | factor {$$ = $1; printf("\n Regla 42: term: factor\n");}
   ;
 
@@ -277,26 +278,14 @@ void validateIdDeclaration(char* id) {
 }
 
 void validateType(ast* left, ast* right, int fail) {
-  if(left->value != NULL) {
-    printf("\n\n GOT left.value %s \n", left->value);
+          
+  if(right->value != NULL) {
     symbolNode* symbolLeft = findSymbol(left->value);
-    if(symbolLeft != NULL) {
-      if(fail == 1 && (
-          
-          strcmp(symbolLeft->type, "STRING") == 0 || 
-          strcmp(symbolLeft->type, "STRING_C") == 0)) {
-        fprintf(stderr, "\n Incompatible operation, line: %d\n", yylineno);
-        exit(1);
-      }
-    }
-  }
-
-   if(right->value != NULL) {
-     printf("\n\n GOT right.value %s \n", right->value);
     symbolNode* symbolRight = findSymbol(right->value);
-    if(symbolRight != NULL) {
+    if(symbolRight != NULL && symbolLeft != NULL) {
       if(fail == 1 && (
-          
+          strcmp(symbolLeft->type, "STRING") == 0 || 
+          strcmp(symbolLeft->type, "STRING_C") == 0 ||
           strcmp(symbolRight->type, "STRING") == 0 || 
           strcmp(symbolRight->type, "STRING_C") == 0)) {
         fprintf(stderr, "\n Incompatible operation, line: %d\n", yylineno);
@@ -306,6 +295,23 @@ void validateType(ast* left, ast* right, int fail) {
   }
 
   
+}
+
+void validateAsignation(char* id, ast* exp) {
+   symbolNode* symbol = findSymbol(id);
+   symbolNode* treeValue = findSymbol(exp->value);
+   if (symbol != NULL && treeValue != NULL) {
+     if((strcmp(symbol->type, "INT") == 0 || strcmp(symbol->type, "FLOAT") == 0) && (strcmp(treeValue->type, "STRING") == 0 || strcmp(treeValue->type, "STRING_C") == 0 )) {
+       fprintf(stderr, "\n Incompatible assignment, line: %d\n", yylineno);
+       exit(1);
+     }
+
+
+     if((strcmp(symbol->type, "STRING") == 0) && (strcmp(treeValue->type, "INT") == 0 || strcmp(treeValue->type, "FLOAT") == 0  || strcmp(treeValue->type, "INTEGER_C") == 0 || strcmp(treeValue->type, "FLOAT_C") == 0 )) {
+       fprintf(stderr, "\n Incompatible assignment, line: %d\n", yylineno);
+       exit(1);
+     }
+   }
 }
 
 

@@ -5,4 +5,4 @@ DEFVAR
 ENDDEF
 
 
-c1 := 0b111 + "a"
+a1 := "1"
